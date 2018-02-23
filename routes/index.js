@@ -37,7 +37,10 @@ router.post('/ttt/play', function(req, res) {
   }
  
   var winner = checkWinner(grid);
-  var new_grid = serverMove(grid);
+  if(winner === " "){
+  	var new_grid = serverMove(grid);
+  	winner = checkWinner(grid);
+  }
   
   for(i = 0; i < 9; i++){
 	  console.log("grid" + new_grid[i]);
