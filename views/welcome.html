@@ -9,12 +9,16 @@
 
 	<body>
 		<div>
-			<h1>Welcome, please enter a name.</h1>
+			<h1>Welcome to Tic Tac Toe</h1>
 			
-			<form action="/ttt" method="post">
-				<input type="text" name="name" placeholder="Name"></input>
-				<input type="submit" value="Play"></input>
-			</form>
+			<div>
+				<form action="/ttt/login" method="post">
+					<input type="submit" value="Login"></input>
+				</form>
+				<form action="/ttt/addusr" method="post">
+					<input type="submit" value="Create Account"></input>
+				</form>
+			</div>			
 		</div>
 	</body>
 	
