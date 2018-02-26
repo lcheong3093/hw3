@@ -30,7 +30,6 @@ function serverTurn(){
 			}else{
 				$("#winner").html("Winner: " + winner);
 			}
-			
 			console.log("go print board");
 			//Update grid w/ server's turn
 			updateGrid(data["grid"]);
