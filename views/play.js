@@ -39,7 +39,6 @@ function serverTurn(){
 
 function updateGrid(board){
 	console.log("print grid");
-	
 	//Print out new board
 	for (i = 0; i < 9; i++) {
         grid[i] = board[i];
