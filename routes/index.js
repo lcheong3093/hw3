@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
+var firebase = require('firebase');
 var router = express.Router();
-//var play_json = require('/public/javascripts/play.json');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -19,6 +19,49 @@ router.post('/ttt', function(req, res){
   
   console.log("name: " + name);
   res.render('play', {name:date});
+});
+
+router.post('/ttt/addusr', function(req, res) {
+	console.log("/addusr");
+	
+	res.render('addusr');
+	
+	//res.render('email_submitted', {message: message});
+});
+
+
+router.post('/ttt/verify', function(req, res){
+	console.log("/verify");
+	
+	var name = req.body.name;
+	var email = req.body.email;
+	var password = req.body.password;
+	console.log('Name: ' + name + ' Email: ' + email);
+	
+	var message = 'Hello, ' + name + " you've successfully created a Tic Tac Toe account! An email was sent to " + email + " with a verification key";
+	
+	firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+	  // Handle Errors here.
+	  var errorCode = error.code;
+	  var errorMessage = error.message;
+	  // ...
+	});
+	
+	var user = firebase.auth().currentUser;
+	
+	if(user != null){
+		user.sendEmailVerification();
+	}else{
+		res.send("error");
+	}
+	
+	console.log("hello");
+	
+	
+});
+
+router.post('/ttt/login', function(req, res){
+	res.send("LOGIN");
 });
 
 router.post('/ttt/play', function(req, res) {
@@ -105,4 +148,3 @@ function serverMove(grid){
 
 
 module.exports = router;
-

@@ -5,6 +5,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var firebase = require("firebase");
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyA22U2U6CIAK76KQXAJ_63I1bKfEKDRWDM",
+  authDomain: "ttt-cse356.firebaseapp.com",
+  databaseURL: "https://ttt-fb.firebaseio.com",
+  storageBucket: "ttt-cse356appspot.com",
+};
+firebase.initializeApp(config);
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 
