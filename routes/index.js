@@ -1,6 +1,9 @@
 var express = require('express');
 var path = require('path');
-var firebase = require('firebase');
+const nodemailer = require('nodemailer');
+const SMTPServer = require('smtp-server').SMTPServer;
+const ejs = require('ejs');
+
 var router = express.Router();
 
 /* GET home page. */
@@ -23,12 +26,10 @@ router.post('/ttt', function(req, res){
 
 router.post('/ttt/addusr', function(req, res) {
 	console.log("/addusr");
-	
+
 	res.render('addusr');
-	
 	//res.render('email_submitted', {message: message});
 });
-
 
 router.post('/ttt/verify', function(req, res){
 	console.log("/verify");
@@ -36,26 +37,37 @@ router.post('/ttt/verify', function(req, res){
 	var name = req.body.name;
 	var email = req.body.email;
 	var password = req.body.password;
-	console.log('Name: ' + name + ' Email: ' + email);
+
+	var message = "Hello, " + name + " welcome to Tic Tac Toe, please verify your account by clicking the link below.";
 	
-	var message = 'Hello, ' + name + " you've successfully created a Tic Tac Toe account! An email was sent to " + email + " with a verification key";
+	const transport = nodemailer.createTransport({
+		host: 'smtp.gmail.com',
+		port: 465,
+		secure: true,
+		auth: {
+		  user: 'laurenhuicheong@gmail.com',
+		  pass: 'oneplusone=2'
+		}
+	});
+	if(transport !== null)
+		console.log("created transporter");
+	else
+		console.log("error w/ creating trasnporter");
+
+	var mailOpts = {
+        from: 'user@gmail.com',
+        to: email,
+        subject: 'Verify your account',
+        text: message
+	};
 	
-	firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-	  // Handle Errors here.
-	  var errorCode = error.code;
-	  var errorMessage = error.message;
-	  // ...
+	transport.sendMail(mailOpts, (err, info) => {
+		if (err) console.log(err); //Handle Error
+ 
+		console.log(info);
 	});
 	
-	var user = firebase.auth().currentUser;
-	
-	if(user != null){
-		user.sendEmailVerification();
-	}else{
-		res.send("error");
-	}
-	
-	console.log("hello");
+	res.render('verify');
 	
 	
 });
