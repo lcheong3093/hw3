@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 const nodemailer = require('nodemailer');
-const SMTPServer = require('smtp-server').SMTPServer;
+var rand = require('generate-key');
 const ejs = require('ejs');
 
 var router = express.Router();
@@ -24,35 +24,39 @@ router.post('/ttt', function(req, res){
   res.render('play', {name:date});
 });
 
-router.post('/ttt/addusr', function(req, res) {
+router.get('/ttt/addusr', function(req, res) {
 	console.log("/addusr");
 
 	res.render('addusr');
 	//res.render('email_submitted', {message: message});
 });
 
-router.post('/ttt/verify', function(req, res){
-	console.log("/verify");
+router.post('/ttt/addusr', function(req, res){
+	console.log("/addusr");
 	
 	var name = req.body.name;
+	var username = req.body.username;
 	var email = req.body.email;
 	var password = req.body.password;
 
-	var message = "Hello, " + name + " welcome to Tic Tac Toe, please verify your account by clicking the link below.";
+	var user = {username: username, password: password, email: email};
+
+
+	var key = rand.generateKey();
+	console.log("generated key: " + key);
+
+	var message = name + ", welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
+	//Create SMTP Server & send verification email
 	const transport = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
 		port: 465,
 		secure: true,
 		auth: {
-		  user: 'laurenhuicheong@gmail.com',
-		  pass: 'oneplusone=2'
+		  user: 'tttcse356@gmail.com',
+		  pass: 'kerfuffle3633*'
 		}
 	});
-	if(transport !== null)
-		console.log("created transporter");
-	else
-		console.log("error w/ creating trasnporter");
 
 	var mailOpts = {
         from: 'user@gmail.com',
@@ -66,10 +70,24 @@ router.post('/ttt/verify', function(req, res){
  
 		console.log(info);
 	});
+
 	
-	res.render('verify');
+	//Send user to verify page
+	res.render('verify', {email: email, key: key});
 	
 	
+});
+
+router.post('/ttt/verify', function(req, res){
+	var key = req.body.key;
+	var verification = req.body.verification;
+
+	console.log("key: " + key + "entered: " + verification);
+
+	if(key === verification)
+		res.render('play'); //add user to database & allow to play game
+	else
+		res.send("Incorrect key");
 });
 
 router.post('/ttt/login', function(req, res){
