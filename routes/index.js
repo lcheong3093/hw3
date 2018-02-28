@@ -64,8 +64,10 @@ router.post('/ttt/addusr', function(req, res){
 
 	var user = {username: username, password: password, email: email, active: false};
 
-	if(!mongo_started)
+	if(!mongo_started){
 		createMongoDB();
+		mongo_started = true;
+	}
 
 	newUser(user);
 
@@ -120,8 +122,24 @@ router.post('/ttt/verify', function(req, res){
 		res.send("Incorrect key");
 });
 
+router.get('/ttt/login', function(req, res){
+	res.render('login');
+});
+
 router.post('/ttt/login', function(req, res){
-	res.send("LOGIN");
+	var username = req.body.username;
+	var query1 = {username: username};
+
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").find(query).toArray(function(err, item) {
+			if (err) throw err;
+			console.log(item.password);
+			db.close()
+		});	
+	});
 });
 
 router.post('/ttt/play', function(req, res) {
@@ -164,12 +182,23 @@ function createMongoDB(){
 		ttt_db.createCollection("users", function(err, res) {
 			if (err) throw err;
 			console.log("Collection created!");
+			db.close()
 		});	
 	});
 }
 
 function newUser(user){
-	
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		console.log("Database created!");
+		
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").insertOne(user, function(err, res) {
+			if (err) throw err;
+			console.log("1 document inserted");
+			db.close();
+		});
+	});
 }
 
 //Gameplay
