@@ -148,7 +148,7 @@ router.post('/login', function(req, res){
 				return;
 			}
 			else if (user.active === false) {
-				res.send("not verified properly");
+				res.send({status: 'ERROR'});
 			}
 			var pass = item[0].password;
 			console.log(pass);
