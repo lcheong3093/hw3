@@ -26,11 +26,11 @@ router.post('/ttt', function(req, res){
   res.render('play', {name:date});
 });
 
-router.get('/ttt/adduser', function(req, res) {
+router.get('/adduser', function(req, res) {
 	res.render('adduser');
 });
 
-router.post('/ttt/adduser', function(req, res){	
+router.post('/adduser', function(req, res){	
 	var name = req.body.name;
 	var username = req.body.username;
 	var email = req.body.email;
@@ -71,7 +71,7 @@ router.post('/ttt/adduser', function(req, res){
 	res.render('verify', {key: key, username: username});
 });
 
-router.post('/ttt/verify', function(req, res){
+router.post('/verify', function(req, res){
 	var key = req.body.key;
 	var verification = req.body.verification;
 	// console.log("key: " + key + "entered: " + verification);
@@ -84,11 +84,11 @@ router.post('/ttt/verify', function(req, res){
 		res.send("Incorrect key");
 });
 
-router.get('/ttt/login', function(req, res){
+router.get('/login', function(req, res){
 	res.render('login');
 });
 
-router.post('/ttt/login', function(req, res){
+router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
 
