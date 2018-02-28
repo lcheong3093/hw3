@@ -85,8 +85,8 @@ router.post('/verify', function(req, res){
 	// 	res.send("Incorrect key");
 
 	var key = rand.generateKey();
-	var user_key = req.key;
-	console.log("key: " + key + "entered: " + user_key);
+	var user_key = req.body.key;
+	console.log("key: " + key + " entered: " + user_key + " email: " + req.email);
 
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
@@ -105,13 +105,13 @@ router.post('/verify', function(req, res){
 
 	var mailOpts = {
         from: 'user@gmail.com',
-        to: req.email,
+        to: req.body.email,
         subject: 'Verify your account',
         text: message
 	};
 	
 	console.log("set mailopts");
-	
+
 	transport.sendMail(mailOpts, (err, info) => {
 		if (err) console.log(err); //Handle Error
 		console.log(info);
