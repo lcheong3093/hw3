@@ -198,7 +198,7 @@ function findUser(username){
 			if(user !== undefined)
 				res.send(user);
 			else
-				console.log("COULD NOT FIND USER");
+				console.log("COULD NOT FIND USER: " + username);
 		});	
 	});
 }
