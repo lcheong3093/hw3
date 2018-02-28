@@ -28,7 +28,6 @@ router.post('/ttt', function(req, res){
 
 router.get('/ttt/addusr', function(req, res) {
 	res.render('addusr');
-	//res.render('email_submitted', {message: message});
 });
 
 router.post('/ttt/addusr', function(req, res){	
@@ -38,11 +37,6 @@ router.post('/ttt/addusr', function(req, res){
 	var password = req.body.password;
 
 	var user = {username: username, password: password, email: email, active: false};
-
-	if(!mongo_started){
-		createMongoDB();
-		mongo_started = true;
-	}
 
 	newUser(user);
 	var key = rand.generateKey();
@@ -72,19 +66,19 @@ router.post('/ttt/addusr', function(req, res){
 		if (err) console.log(err); //Handle Error
 		console.log(info);
 	});
+
 	//Send user to verify page
 	res.render('verify', {key: key, username: username});
 });
 
 router.post('/ttt/verify', function(req, res){
-	console.log("sent from verify.html: " + req.body.user.username);
 	var key = req.body.key;
 	var verification = req.body.verification;
 	// console.log("key: " + key + "entered: " + verification);
 	if(verification === key || verification === "abracadabra"){
 		var d = new Date();
   		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-		validateUser(username);
+		validateUser(req.body.username);
 		res.render('play', {message: message}); //add user to database & allow to play game
 	} else
 		res.send("Incorrect key");
@@ -108,6 +102,7 @@ router.post('/ttt/login', function(req, res){
 			var user = item[0];
 			if (user === undefined) {
 				res.send("user not found");
+				return;
 			}
 			else if (user.active === false) {
 				res.send("not verified properly");
@@ -116,8 +111,10 @@ router.post('/ttt/login', function(req, res){
 			console.log(pass);
 			if(pass !== password)
 				res.render('invalid_login');
-			else
-				play(username);
+			else{
+				var message = constructHeader(username);
+				res.render('play', {message: message});
+			}
 			db.close()
 		});	
 	});
@@ -154,7 +151,7 @@ function newUser(user){
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
-			console.log("user-document inserted");
+			console.log("user inserted: " + user);
 			db.close();
 		});
 	});
@@ -164,7 +161,7 @@ function validateUser(username){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
-		var myquery = { username: username } ;
+		var myquery = { username:username } ;
 		var newvalues = { $set: { active:true } };	  
 		ttt_db.collection("users").update(myquery, newvalues, function(err, res) {
 			if (err) throw err;
@@ -173,19 +170,14 @@ function validateUser(username){
 		});
 	});
 
-	findUser(susername, function(res){
-		console.log(res.user);
-	});
+	ret = findUser(username);
+	console.log(ret);
 }
 
-function play(username){
-	$.ajax({
-		url: "/ttt/play",
-		type: "get",
-        data: JSON.stringify({"username":username}),
-		contentType: "application/json",
-		dataType: "json"
-    });
+function constructHeader(username){
+	var d = new Date();
+	var message = username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ; 
+	return message;
 }
 
 function findUser(username){
@@ -196,7 +188,7 @@ function findUser(username){
 			if (err) throw err;
 			var user = item[0];
 			if(user !== undefined)
-				res.send(user);
+				return user;
 			else
 				console.log("COULD NOT FIND USER: " + username);
 		});	
