@@ -94,13 +94,22 @@ router.get('/ttt/login', function(req, res){
 
 router.post('/ttt/login', function(req, res){
 	var username = req.body.username;
-	var query1 = {username: username};
+	var password = req.body.password;
+
+	var query = {username: username};
+	console.log(query.username);
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
-			console.log(item.password);
+
+			var pass = item[0].password;
+			console.log(pass);
+			if(pass !== password)
+				res.render('invalid_login');
+			else
+				play(username);
 			db.close()
 		});	
 	});
@@ -141,6 +150,16 @@ function newUser(user){
 			db.close();
 		});
 	});
+}
+
+function play(username){
+	$.ajax({
+		url: "/ttt/play",
+		type: "get",
+        data: JSON.stringify({"username":username}),
+		contentType: "application/json",
+		dataType: "json"
+    });
 }
 
 //Gameplay
