@@ -7,20 +7,20 @@ const nodemailer = require('nodemailer');
 var rand = require('generate-key');
 //Store user data
 
-const Mongod = require('mongod');
+// const Mongod = require('mongod');
 
 // Simply pass the port that you want a MongoDB server to listen on.
-const server = new Mongod({
-	conf: '../mongodb.conf'
-  });
-server.open((err) => {
-  if (err === null) {
-    // You may now connect a client to the MongoDB
-    // server bound to port 27017.
-  }
-});
+// const server = new Mongod({
+// 	conf: '../mongodb.conf'
+// });
+// const server = new Mongod(27017);
 
-
+// server.open((err) => {
+//   if (err === null) {
+//     // You may now connect a client to the MongoDB
+//     // server bound to port 27017.
+//   }
+// });
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
 var mongo_started = false;
