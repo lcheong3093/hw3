@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "sudo mongod --fork --logpath /var/log/mongodb.log",
     "start": "node ./bin/www"
   },
   "dependencies": {
