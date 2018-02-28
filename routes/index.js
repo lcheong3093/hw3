@@ -170,8 +170,14 @@ function validateUser(username){
 		});
 	});
 
+<<<<<<< HEAD
 	ret = findUser(username);
 	console.log(ret);
+=======
+	findUser(username, function(res){
+		console.log(res.user);
+	});
+>>>>>>> 55994b164344e15bc64e1c95a72e3210fb6c8a95
 }
 
 function constructHeader(username){
