@@ -105,7 +105,10 @@ router.post('/ttt/login', function(req, res){
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
-
+			var user = item[0];
+			if (user.active === false) {
+				res.send("not verified properly");
+			}
 			var pass = item[0].password;
 			console.log(pass);
 			if(pass !== password)
