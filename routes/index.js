@@ -73,7 +73,7 @@ router.post('/ttt/addusr', function(req, res){
 		console.log(info);
 	});
 	//Send user to verify page
-	res.render('verify', {key: key, user: user});
+	res.render('verify', {key: key, username: username});
 });
 
 router.post('/ttt/verify', function(req, res){
@@ -83,9 +83,8 @@ router.post('/ttt/verify', function(req, res){
 	// console.log("key: " + key + "entered: " + verification);
 	if(verification === key || verification === "abracadabra"){
 		var d = new Date();
-  		var message = req.body.user.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-		var user = req.body.user;
-		validateUser(user);
+  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+		validateUser(username);
 		res.render('play', {message: message}); //add user to database & allow to play game
 	} else
 		res.send("Incorrect key");
@@ -161,11 +160,11 @@ function newUser(user){
 	});
 }
 
-function validateUser(user){
+function validateUser(username){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
-		var myquery = { username: user.username } ;
+		var myquery = { username: username } ;
 		var newvalues = { $set: { active:true } };	  
 		ttt_db.collection("users").update(myquery, newvalues, function(err, res) {
 			if (err) throw err;
@@ -174,7 +173,7 @@ function validateUser(user){
 		});
 	});
 
-	findUser(user.username, function(res){
+	findUser(susername, function(res){
 		console.log(res.user);
 	});
 }
