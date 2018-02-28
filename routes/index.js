@@ -26,11 +26,11 @@ router.post('/ttt', function(req, res){
   res.render('play', {name:date});
 });
 
-router.get('/ttt/addusr', function(req, res) {
-	res.render('addusr');
+router.get('/ttt/adduser', function(req, res) {
+	res.render('adduser');
 });
 
-router.post('/ttt/addusr', function(req, res){	
+router.post('/ttt/adduser', function(req, res){	
 	var name = req.body.name;
 	var username = req.body.username;
 	var email = req.body.email;
