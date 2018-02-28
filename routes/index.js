@@ -106,6 +106,9 @@ router.post('/ttt/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
+			if (user !== null) {
+				console.log("Asdfasdfa");
+			}
 			if (user === null) {
 				res.send("user not found");
 			}
