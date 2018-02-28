@@ -39,10 +39,58 @@ router.post('/adduser', function(req, res){
 	var user = {username: username, password: password, email: email, active: false};
 
 	newUser(user);
+	// var key = rand.generateKey();
+	// console.log("generated key: " + key);
+
+	// var message = name + ", welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
+	
+	// //Create SMTP Server & send verification email
+	// const transport = nodemailer.createTransport({
+	// 	host: 'smtp.gmail.com',
+	// 	port: 465,
+	// 	secure: true,
+	// 	auth: {
+	// 	  user: 'tttcse356@gmail.com',
+	// 	  pass: 'kerfuffle3633*'
+	// 	}
+	// });
+
+	// var mailOpts = {
+    //     from: 'user@gmail.com',
+    //     to: email,
+    //     subject: 'Verify your account',
+    //     text: message
+	// };
+	
+	// transport.sendMail(mailOpts, (err, info) => {
+	// 	if (err) console.log(err); //Handle Error
+	// 	console.log(info);
+	// });
+
+	//Send user to verify page
+	var response = {status: 'OK'};
+	res.send(response);
+});
+
+router.post('/verify', function(req, res){
+	// var key = req.body.key;
+	// var verification = req.body.verification;
+	// // console.log("key: " + key + "entered: " + verification);
+	// if(verification === key || verification === "abracadabra"){
+	// 	var d = new Date();
+  	// 	var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+	// 	validateUser(req.body.username);
+	// 	res.render('play', {message: message}); //add user to database & allow to play game
+	// } else
+	// 	res.send("Incorrect key");
+
 	var key = rand.generateKey();
 	console.log("generated key: " + key);
 
-	var message = name + ", welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
+	var user_key = req.key;
+	// console.log("key: " + key + "entered: " + verification);
+
+	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
 	//Create SMTP Server & send verification email
 	const transport = nodemailer.createTransport({
@@ -67,20 +115,10 @@ router.post('/adduser', function(req, res){
 		console.log(info);
 	});
 
-	//Send user to verify page
-	var response = {status: 'OK'};
-	res.send(response);
-});
-
-router.post('/verify', function(req, res){
-	var key = req.body.key;
-	var verification = req.body.verification;
-	// console.log("key: " + key + "entered: " + verification);
-	if(verification === key || verification === "abracadabra"){
-		var d = new Date();
-  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-		validateUser(req.body.username);
-		res.render('play', {message: message}); //add user to database & allow to play game
+	if(user_key === key || user_key === "abracadabra"){
+		validateUser(email);
+		res.send({status:'OK'});
+		// res.render('play', {message: message}); //add user to database & allow to play game
 	} else
 		res.send("Incorrect key");
 });
@@ -158,11 +196,11 @@ function newUser(user){
 	});
 }
 
-function validateUser(username){
+function validateUser(email){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
-		var myquery = { username:username } ;
+		var myquery = { email:email } ;
 		var newvalues = { $set: { active:true } };	  
 		ttt_db.collection("users").update(myquery, newvalues, function(err, res) {
 			if (err) throw err;
@@ -171,8 +209,8 @@ function validateUser(username){
 		});
 	});
 
-	ret = findUser(username);
-	console.log(ret);
+	// ret = findUser(email);
+	// console.log(ret);
 }
 
 function constructHeader(username){
