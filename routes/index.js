@@ -86,7 +86,7 @@ router.post('/verify', function(req, res){
 
 	var key = rand.generateKey();
 	var user_key = req.body.key;
-	console.log("key: " + key + " entered: " + user_key + " email: " + req.email);
+	console.log("key: " + key + " entered: " + user_key + " email: " + req.body.email);
 
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
@@ -120,7 +120,7 @@ router.post('/verify', function(req, res){
 	console.log("Mail sent");
 
 	if(user_key === key || user_key === "abracadabra"){
-		validateUser(email);
+		validateUser(req.body.email);
 		res.send({status:'OK'});
 		// res.render('play', {message: message}); //add user to database & allow to play game
 	} else
