@@ -22,7 +22,8 @@ server.open((err) => {
 
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
-// var mongoose = require('mongoose');
+var mongo_started = false;
+
 var url = "mongodb://localhost/ttt"
 
 var router = express.Router();
@@ -61,6 +62,9 @@ router.post('/ttt/addusr', function(req, res){
 	var password = req.body.password;
 
 	var user = {username: username, password: password, email: email, active: false};
+
+	if(!mongo_started)
+		createMongoDB();
 
 	newUser(user);
 
@@ -150,12 +154,21 @@ router.post('/ttt/play', function(req, res) {
   res.send(data);
 });
 
-function newUser(user){
+function createMongoDB(){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		console.log("Database created!");
-		db.close();
+		
+		var ttt_db = db.db("ttt");
+		ttt_db.createCollection("users", function(err, res) {
+			if (err) throw err;
+			console.log("Collection created!");
+		});	
 	});
+}
+
+function newUser(user){
+	
 }
 
 //Gameplay
