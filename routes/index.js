@@ -155,8 +155,7 @@ router.post('/login', function(req, res){
 			if(pass !== password)
 				res.render('invalid_login');
 			else{
-				var message = constructHeader(username);
-				res.render('play', {message: message});
+				res.send({status: 'OK'});
 			}
 			db.close()
 		});	
