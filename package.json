@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /data/logs",
+    "prestart": "sudo mongod --fork --logpath /var/log/mongodb.log",
     "start": "node ./bin/www",
-    "poststop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
-    "pretest": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /data/logs",
-    "posttest": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
+    "poststart": "npm stop"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
