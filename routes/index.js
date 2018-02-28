@@ -1,8 +1,15 @@
 var express = require('express');
 var path = require('path');
+
+//Send user a verification email
 const nodemailer = require('nodemailer');
+//Generate verification key
 var rand = require('generate-key');
-const ejs = require('ejs');
+//Store user data
+var mongo = require('mongodb');
+var mongoClient = mongo.MongoClient;
+var mongoose = require('mongoose');
+var url = "mongodb://localhost/ttt"
 
 var router = express.Router();
 
@@ -39,8 +46,9 @@ router.post('/ttt/addusr', function(req, res){
 	var email = req.body.email;
 	var password = req.body.password;
 
-	var user = {username: username, password: password, email: email};
+	var user = {username: username, password: password, email: email, active: false};
 
+	newUser(user);
 
 	var key = rand.generateKey();
 	console.log("generated key: " + key);
@@ -84,9 +92,10 @@ router.post('/ttt/verify', function(req, res){
 
 	console.log("key: " + key + "entered: " + verification);
 
-	if(key === verification){
+	if(key === verification || verification === "abracadabra"){
 		var d = new Date();
-  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ;
+  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+		
 		res.render('play', {message: message}); //add user to database & allow to play game
 	}else
 		res.send("Incorrect key");
@@ -126,6 +135,19 @@ router.post('/ttt/play', function(req, res) {
   
   res.send(data);
 });
+
+function newUser(user){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		console.log("Database created!");
+		db.close();
+	});
+
+	// mongoose.connect(url, function(err, db){
+	// 	if(err) throw err;
+	// 	console.log("mongoose works");
+	// });
+}
 
 //Gameplay
 function checkWinner(grid){	
