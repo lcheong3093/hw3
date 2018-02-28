@@ -10,8 +10,9 @@ var rand = require('generate-key');
 const Mongod = require('mongod');
 
 // Simply pass the port that you want a MongoDB server to listen on.
-const server = new Mongod(27017);
-
+const server = new Mongod({
+	conf: '../mongodb.conf'
+  });
 server.open((err) => {
   if (err === null) {
     // You may now connect a client to the MongoDB
