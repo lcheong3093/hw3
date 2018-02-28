@@ -106,13 +106,10 @@ router.post('/ttt/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			if (user !== undefined) {
-				console.log("user is not undefined");
-			}
 			if (user === undefined) {
 				res.send("user not found");
 			}
-			if (user.active === false) {
+			else if (user.active === false) {
 				res.send("not verified properly");
 			}
 			var pass = item[0].password;
