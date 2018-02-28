@@ -173,7 +173,7 @@ function validateUser(username){
 		});
 	});
 
-	findUser(susername, function(res){
+	findUser(username, function(res){
 		console.log(res.user);
 	});
 }
