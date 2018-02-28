@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "prestart": "mongod --dbpath data --fork --logpath /dev/null",
+    "start": "node ./bin/www",
+    "poststop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
+    "pretest": "mongod --dbpath data --fork --logpath /dev/null",
+    "posttest": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
   },
+  
   "dependencies": {
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
