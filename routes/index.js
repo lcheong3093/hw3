@@ -172,6 +172,10 @@ function validateUser(user){
 			db.close();
 		});
 	});
+
+	findUser(user.username, function(res){
+		console.log(res.user);
+	});
 }
 
 function play(username){
@@ -182,6 +186,21 @@ function play(username){
 		contentType: "application/json",
 		dataType: "json"
     });
+}
+
+function findUser(username){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+			if (err) throw err;
+			var user = item[0];
+			if(user !== undefined)
+				res.send(user);
+			else
+				console.log("COULD NOT FIND USER");
+		});	
+	});
 }
 
 //Gameplay
