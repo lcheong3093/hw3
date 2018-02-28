@@ -124,7 +124,7 @@ router.post('/verify', function(req, res){
 		res.send({status:'OK'});
 		// res.render('play', {message: message}); //add user to database & allow to play game
 	} else
-		res.send("Incorrect key");
+		res.send({status: 'ERROR'});
 });
 
 router.get('/login', function(req, res){
