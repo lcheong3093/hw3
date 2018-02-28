@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /dev/null",
+    "prestart": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /data/logs",
     "start": "node ./bin/www",
     "poststop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
-    "pretest": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /dev/null",
+    "pretest": "./mongodb-linux-x86_64-3.4.9/bin/mongod --dbpath /data/db --fork --logpath /data/logs",
     "posttest": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
   },
   "dependencies": {
