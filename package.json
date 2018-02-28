@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "prestart": "sudo mongod --fork --logpath /var/log/mongodb.log",
-    "start": "node ./bin/www",
-    "poststart": "npm stop"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
