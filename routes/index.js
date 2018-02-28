@@ -73,7 +73,7 @@ router.post('/ttt/addusr', function(req, res){
 		console.log(info);
 	});
 	//Send user to verify page
-	res.render('verify', {email: email, key: key, username: username, user: user});
+	res.render('verify', {key: key, user: user});
 });
 
 router.post('/ttt/verify', function(req, res){
@@ -82,7 +82,7 @@ router.post('/ttt/verify', function(req, res){
 	// console.log("key: " + key + "entered: " + verification);
 	if(verification === key || verification === "abracadabra"){
 		var d = new Date();
-  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+  		var message = req.body.user.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
 		var user = req.body.user;
 		validateUser(user);
 		res.render('play', {message: message}); //add user to database & allow to play game
