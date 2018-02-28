@@ -1,32 +1,13 @@
 var express = require('express');
 var path = require('path');
-
 //Send user a verification email
 const nodemailer = require('nodemailer');
 //Generate verification key
 var rand = require('generate-key');
-//Store user data
-
-// const Mongod = require('mongod');
-
-// Simply pass the port that you want a MongoDB server to listen on.
-// const server = new Mongod({
-// 	conf: '../mongodb.conf'
-// });
-// const server = new Mongod(27017);
-
-// server.open((err) => {
-//   if (err === null) {
-//     // You may now connect a client to the MongoDB
-//     // server bound to port 27017.
-//   }
-// });
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
 var mongo_started = false;
-
 var url = "mongodb://localhost/ttt"
-
 var router = express.Router();
 
 /* GET home page. */
@@ -41,22 +22,16 @@ router.get('/ttt', function(req, res){
 router.post('/ttt', function(req, res){
   var name = req.body.name;
   var d = new Date();
-  var date = name + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ;
-  
-  console.log("name: " + name);
+  var date = name + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ; 
   res.render('play', {name:date});
 });
 
 router.get('/ttt/addusr', function(req, res) {
-	console.log("/addusr");
-
 	res.render('addusr');
 	//res.render('email_submitted', {message: message});
 });
 
-router.post('/ttt/addusr', function(req, res){
-	console.log("/addusr");
-	
+router.post('/ttt/addusr', function(req, res){	
 	var name = req.body.name;
 	var username = req.body.username;
 	var email = req.body.email;
@@ -70,7 +45,6 @@ router.post('/ttt/addusr', function(req, res){
 	}
 
 	newUser(user);
-
 	var key = rand.generateKey();
 	console.log("generated key: " + key);
 
@@ -96,29 +70,21 @@ router.post('/ttt/addusr', function(req, res){
 	
 	transport.sendMail(mailOpts, (err, info) => {
 		if (err) console.log(err); //Handle Error
- 
 		console.log(info);
 	});
-
-	
 	//Send user to verify page
 	res.render('verify', {email: email, key: key, username: username});
-	
-	
 });
 
 router.post('/ttt/verify', function(req, res){
 	var key = req.body.key;
 	var verification = req.body.verification;
-
-	console.log("key: " + key + "entered: " + verification);
-
-	if(key === verification || verification === "abracadabra"){
+	// console.log("key: " + key + "entered: " + verification);
+	if(verification === key || verification === "abracadabra"){
 		var d = new Date();
   		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-		
 		res.render('play', {message: message}); //add user to database & allow to play game
-	}else
+	} else
 		res.send("Incorrect key");
 });
 
@@ -129,10 +95,8 @@ router.get('/ttt/login', function(req, res){
 router.post('/ttt/login', function(req, res){
 	var username = req.body.username;
 	var query1 = {username: username};
-
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
@@ -143,31 +107,12 @@ router.post('/ttt/login', function(req, res){
 });
 
 router.post('/ttt/play', function(req, res) {
-  console.log("gets to server"); 
-  
-  /*
-  for(i = 0; i < 9; i++){
-	  console.log("b" + i + " : " + req.body.i);
-  }
-  */
-  
   var grid = req.body.grid;
-  
-  for(j = 0; j < 9; j++){
-	  console.log("grid" + grid[j]);
-  }
- 
   var winner = checkWinner(grid);
   if(winner === " "){
   	var new_grid = serverMove(grid);
   	winner = checkWinner(grid);
-  }
-  
-  for(i = 0; i < 9; i++){
-	  console.log("grid" + new_grid[i]);
   }  
-  console.log("winner: " + winner + "WOWW");
-  
   var data = {grid:new_grid, winner:winner};
   
   res.send(data);
@@ -176,12 +121,11 @@ router.post('/ttt/play', function(req, res) {
 function createMongoDB(){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		console.log("Database created!");
-		
+		console.log("Database created");
 		var ttt_db = db.db("ttt");
 		ttt_db.createCollection("users", function(err, res) {
 			if (err) throw err;
-			console.log("Collection created!");
+			console.log("Collection created");
 			db.close()
 		});	
 	});
@@ -189,13 +133,11 @@ function createMongoDB(){
 
 function newUser(user){
 	mongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		console.log("Database created!");
-		
+		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
-			console.log("1 document inserted");
+			console.log("document inserted");
 			db.close();
 		});
 	});
@@ -219,13 +161,10 @@ function checkWinner(grid){
 		return "O";
 	if(grid[6] === "O" && grid[7] === "O" && grid[8] === "O")
 		return "O";
-		
 	if(grid[0] === "X" && grid[1] === "X" && grid[2] === "X")
 		return "X";
-	if(grid[0] === "X" && grid[3] === "X" && grid[6] === "X"){
-		console.log("HELLO???");
+	if(grid[0] === "X" && grid[3] === "X" && grid[6] === "X")
 		return "X";
-	}
 	if(grid[0] === "X" && grid[4] === "X" && grid[8] === "X")
 		return "X";
 	if(grid[1] === "X" && grid[4] === "X" && grid[7] === "X")
@@ -238,7 +177,6 @@ function checkWinner(grid){
 		return "X";
 	if(grid[6] === "X" && grid[7] === "X" && grid[8] === "X")
 		return "X";
-	
 	return " ";
 }
 
@@ -250,7 +188,5 @@ function serverMove(grid){
 		}
 	}
 }
-
-
 
 module.exports = router;
