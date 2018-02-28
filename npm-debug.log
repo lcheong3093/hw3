@@ -7,7 +7,7 @@
 6 silly lifecycle expressproject@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle expressproject@0.0.0~start: expressproject@0.0.0
 8 verbose lifecycle expressproject@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle expressproject@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/calvin_li/ttt/node_modules/.bin:/home/calvin_li/bin:/home/calvin_li/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+9 verbose lifecycle expressproject@0.0.0~start: PATH: /usr/share/npm/bin/node-gyp-bin:/home/calvin_li/ttt/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 10 verbose lifecycle expressproject@0.0.0~start: CWD: /home/calvin_li/ttt
 11 silly lifecycle expressproject@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]
 12 silly lifecycle expressproject@0.0.0~start: Returned: code: 1  signal: null
