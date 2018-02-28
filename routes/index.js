@@ -8,7 +8,7 @@ var rand = require('generate-key');
 //Store user data
 var mongo = require('mongodb');
 var mongoClient = mongo.MongoClient;
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var url = "mongodb://localhost/ttt"
 
 var router = express.Router();
@@ -142,11 +142,6 @@ function newUser(user){
 		console.log("Database created!");
 		db.close();
 	});
-
-	// mongoose.connect(url, function(err, db){
-	// 	if(err) throw err;
-	// 	console.log("mongoose works");
-	// });
 }
 
 //Gameplay
