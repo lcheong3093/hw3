@@ -77,6 +77,7 @@ router.post('/ttt/addusr', function(req, res){
 });
 
 router.post('/ttt/verify', function(req, res){
+	console.log("sent from verify.html: " + req.body.user);
 	var key = req.body.key;
 	var verification = req.body.verification;
 	// console.log("key: " + key + "entered: " + verification);
