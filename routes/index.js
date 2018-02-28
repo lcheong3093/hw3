@@ -73,7 +73,7 @@ router.post('/ttt/addusr', function(req, res){
 
 	
 	//Send user to verify page
-	res.render('verify', {email: email, key: key});
+	res.render('verify', {email: email, key: key, username: username});
 	
 	
 });
@@ -84,9 +84,11 @@ router.post('/ttt/verify', function(req, res){
 
 	console.log("key: " + key + "entered: " + verification);
 
-	if(key === verification)
-		res.render('play'); //add user to database & allow to play game
-	else
+	if(key === verification){
+		var d = new Date();
+  		var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ;
+		res.render('play', {message: message}); //add user to database & allow to play game
+	}else
 		res.send("Incorrect key");
 });
 
