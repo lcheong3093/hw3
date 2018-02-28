@@ -69,7 +69,7 @@ router.post('/adduser', function(req, res){
 
 	//Send user to verify page
 	var response = {status: 'OK'};
-	res.render('verify', {key: key, username: username, data: JSON.stringify(response)});
+	// res.render('verify', {key: key, username: username, data: JSON.stringify(response)});
 });
 
 router.post('/verify', function(req, res){
