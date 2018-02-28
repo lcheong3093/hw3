@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "mongod --dbpath data --fork --logpath /dev/null",
+    "prestart": "./bin/mongod --dbpath data --fork --logpath /dev/null",
     "start": "node ./bin/www",
     "poststop": "mongo admin --eval 'db.shutdownServer()' > /dev/null",
     "pretest": "mongod --dbpath data --fork --logpath /dev/null",
