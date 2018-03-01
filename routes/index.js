@@ -111,10 +111,11 @@ router.post('/login', function(req, res){
 			} else{								//Everything is fine -> log in
 				var cookie = req.cookies;
 				if(cookie === undefined){		//Create new cookie if does not exist already
-					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				}else{							//Cookie exists
-					console.log("cookie: " + cookie);
+					// console.log("cookie: " + cookie);
+					console.log("a;lsdkf;laskd;lfksdf");
 				}
 				res.send({status: 'OK'});
 			}
