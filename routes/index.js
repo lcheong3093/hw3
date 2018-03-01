@@ -147,7 +147,7 @@ console.log("user has not been activated/verified");
 console.log("A: password in db doesn't match password entered");
 				res.render('invalid_login');
 			}
-			else{
+			else if(user.active === true){
 console.log("B: password in db matches password entered");
 				res.send({status: 'OK'});
 			}
