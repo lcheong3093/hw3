@@ -258,9 +258,28 @@ router.post('/getgame', function(req, res) {
 });
 
 router.post('/getscore', function(req, res) {
-	// to get { status:”OK”, human:0, wopr: 5, tie: 10 }
-				// is this win, loss, tie? 
-	res.send({status: 'OK'});
+    // to get { status:”OK”, human:0, wopr: 5, tie: 10 }
+    var cookie = req.cookies;
+    var username = cookie.username;
+    var user;
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+            if (err) throw err;
+			user = item[0];
+			if(user !== undefined){
+				console.log("user info:", user);
+				console.log("saved grid found: ", user.grid);
+			}else{
+				console.log("could not find saved game for: " + username);
+			}
+		});	
+	});
+    var human = user.human;   
+    var wopr = user.wopr;
+    var tie = user.tie;
+	res.send({status: 'OK', human:human, wopr:wopr, tie:tie});
 });
 
 function createMongoDB(){
