@@ -163,15 +163,15 @@ router.post('/ttt/play', function(req, res) {
 	var move = req.body.move;
 	console.log("current player: "+ username + " move: " + move);
 
-	if(username === undefined){
-		res.send({status: 'ERROR'});
-	}else{
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").findOne({username: username}, function(err, item) {
 			if (err) throw err;
 			var user = item;
+			if (user.login === false) {
+				res.send({status: "ERROR"});
+			} else {
 			if(user !== undefined){
 				var grid = user.grid;
 				var winner = undefined;
@@ -254,11 +254,9 @@ router.post('/ttt/play', function(req, res) {
 					res.send({grid:grid, winner:winner});
 				}
 			}
-			else
-				console.log("COULD NOT FIND USER: " + username);
+			}
 		});
 	});
-	}
 });
 
 router.post('/listgames', function(req, res) {
