@@ -154,6 +154,7 @@ router.post('/ttt/play', function(req, res) {
 	// }
 
 	var saved_game = getSavedGame(username);
+	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
 	console.log("saved game: ", saved_game.grid);
 
 	var grid = req.body.grid;
