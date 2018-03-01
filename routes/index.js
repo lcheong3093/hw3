@@ -58,8 +58,8 @@ router.post('/verify', function(req, res){
 		port: 465,
 		secure: true,
 		auth: {
-		  user: 'tttcse356@gmail.com',
-		  pass: 'kerfuffle3633*'
+		  user: 'laurenhuicheong@gmail.com',
+		  pass: 'oneplusone=2'
 		}
 	});
 	var mailOpts = {
@@ -92,7 +92,6 @@ router.post('/login', function(req, res){
 		console.log(req.header.cookie);
 	}
 
-
 	var username = req.body.username;
 	var password = req.body.password;
 
@@ -104,15 +103,15 @@ router.post('/login', function(req, res){
 			if (err) throw err;
 			var user = item[0];
 			var pass = user.password;
-			if (user === undefined) {			//User not in database
-				res.send("user not found");
-			}else if (user.active === false) {	//Account hasn't been verified
+			if (user === undefined)				//User not in database
 				res.send({status: 'ERROR'});
-			}else if(pass !== password) {		//Incorrect password
+			else if (user.active === false)		//Account hasn't been verified
 				res.send({status: 'ERROR'});
-			}else{		//Everything is fine -> log in
+			else if(pass !== password)			//Incorrect password
+				res.send({status: 'ERROR'});
+			else								//Everything is fine -> log in
 				res.send({status: 'OK'});
-			}
+			
 			db.close()
 		});	
 	});
@@ -129,15 +128,25 @@ router.post('/logout', function(req, res) {
 });
 
 router.post('/ttt/play', function(req, res) {
-  var grid = req.body.grid;
-  var winner = checkWinner(grid);
-  if(winner === " "){
-  	var new_grid = serverMove(grid);
-  	winner = checkWinner(grid);
-  }  
-  var data = {grid:new_grid, winner:winner};
+	var grid = req.body.grid;
+	var move = req.body.move;
+
+	if(move === undefined){						//move = null -> don't make a move
+		var ret = {grid: grid, winner: " "};
+		res.send(ret);
+	}else{
+		var winner = checkWinner(grid);
+
+		if(winner === " "){
+			var new_grid = serverMove(grid);
+			winner = checkWinner(grid);
+		}  
+		var data = {grid:new_grid, winner:winner};
+		
+		res.send(data);
+	}
+
   
-  res.send(data);
 });
 
 function createMongoDB(){
