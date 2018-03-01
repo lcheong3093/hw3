@@ -97,8 +97,8 @@ router.post('/login', function(req, res){
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " ",];
 
 	var data = {username: username, password: password, grid: grid};
-
 	var query = {username: username};
+	
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
