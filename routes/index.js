@@ -143,7 +143,6 @@ router.post('/ttt/play', function(req, res) {
 		ttt_db.collection("users").findOne({username: username}, function(err, item) {
 			if (err) throw err;
 			var user = item;
-			console.log("*** user ***: ", user);
 			if(user !== undefined){
 				var grid = user.grid;
 				var winner = undefined;
@@ -152,7 +151,7 @@ router.post('/ttt/play', function(req, res) {
 					console.log("user didn't make a move");
 					res.send({grid: grid, winner: " "});
 				} else {
-					grid[move] = 'X';
+					grid[move] = 'O';
 					//check for a winner
 					winner = checkWinner(grid);
 					if (winner !== " ") {
@@ -229,10 +228,11 @@ router.post('/listgames', function(req, res) {
 		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
 			games = item[0].listgames;
-		});	
+			res.send({status: 'OK', games: games});
+		});
 	});
 
-	res.send({status: 'OK', games:[]});
+	
 });
 
 router.post('/getgame', function(req, res) {
@@ -449,7 +449,7 @@ function checkWinner(grid){
 function serverMove(grid){
 	for(i = 0; i < 9; i++){
 		if(grid[i] === " "){
-			grid[i] = 'O';
+			grid[i] = 'X';
 			return grid;
 		}
 	}
