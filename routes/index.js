@@ -144,7 +144,7 @@ router.post('/logout', function(req, res) {
 router.post('/ttt/play', function(req, res) {
 	var cookie = req.cookies;
 	var username = cookie.username;
-console.log("username from cookie:", username);
+console.log("username from cookie:"+ username);
 	// if(cookie === undefined){
 	// 	console.log("no cookie from browser");
 	// }else{
