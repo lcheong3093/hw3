@@ -228,7 +228,7 @@ router.post('/ttt/play', function(req, res) {
 							else if (winner === "X") {
 								score[1]++;
 							}
-							else if (winner === "tie") {
+							else if (winner === ' ') {
 								score[2]++; 
 							}
 				
