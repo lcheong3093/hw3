@@ -154,7 +154,7 @@ router.post('/ttt/play', function(req, res) {
 	// }
 
 	var saved_game = getSavedGame(username);
-	console.log("saved game: ", saved_game);
+	console.log("saved game: ", saved_game.grid);
 
 	var grid = req.body.grid;
 	var move = req.body.move;
@@ -197,7 +197,7 @@ function createMongoDB(){
 }
 
 function newUser(user){
-	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " ",];
+	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
@@ -262,8 +262,8 @@ function getSavedGame(username){
 			if (err) throw err;
 			var game = item[0];
 			if(game !== undefined){
-				console.log("saved grid foudn: ", game.grid);
-				return game.grid;
+				console.log("saved grid found: ", game.grid);
+				return game;
 			}else{
 				console.log("could not find saved game for: " + username);
 				return undefined;
