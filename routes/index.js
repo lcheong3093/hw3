@@ -232,7 +232,7 @@ router.post('/listgames', function(req, res) {
 			console.log("games:", games);
 		});	
 	});
-	res.send({status: 'OK', games:games});
+	res.send({games:games});
 });
 
 router.post('/getgame', function(req, res) {
