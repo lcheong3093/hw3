@@ -11,12 +11,6 @@ var mongo_started = false;
 var url = "mongodb://localhost/ttt"
 var router = express.Router();
 
-// router.use(cookieSession({
-// 	name: 'user_id',
-// 	keys: ['key1', 'key2']
-// }));
-  
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -115,9 +109,9 @@ router.post('/login', function(req, res){
 				console.log("wrong password");
 				res.send({status: 'ERROR'});
 			} else{								//Everything is fine -> log in
-				var cookie = req.cookies.username;
+				var cookie = req.cookies;
 				if(cookie === undefined){		//Create new cookie if does not exist already
-					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				}else{							//Cookie exists
 					console.log("cookie: " + cookie);
