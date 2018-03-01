@@ -40,6 +40,7 @@ router.post('/adduser', function(req, res){
 	var score = [0,0,0]; 	// wins, losses, ties
 
 	var listgames = [];
+	var started = [];
 
 	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, score: score, active: false};
 	
@@ -112,26 +113,9 @@ router.post('/login', function(req, res){
 				res.send({status: 'ERROR'});
 			} else {										//Everything is fine -> log in
 				var cookie = req.cookies.username;
-				if (cookie === undefined) {					//Create new cookie if does not exist already
+				if (cookie === undefined || cookie !== username) {					//Create new cookie if does not exist already
 					res.cookie("username", username);
 					console.log("cookie created");
-
-					var first_game = {id: user.listgames.length + 1, start_date: new Date()};
-					user.listgames.push(first_game);
-					console.log("first game: ", user.listgames);
-
-					mongoClient.connect(url, function(err, db) {
-						if (err) throw err;		
-						var ttt_db = db.db("ttt");
-						var myquery = { username:username } ;
-						var newvalues = { $set: { listgames:user.listgames } };	  
-						ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
-							if (err) throw err;
-							console.log("new game added to db");
-							db.close();
-						});
-					});
-
 				} else if(cookie === username){									//Cookie exists
 					console.log("cookie exists");
 				}
@@ -148,37 +132,49 @@ router.post('/logout', function(req, res) {
 });
 
 router.post('/ttt/play', function(req, res) {
-	var cookie = req.cookies;
-	var username = cookie.username;
-	console.log("username from cookie:"+ username);
+	var username = req.cookies.username;
+	var move = req.body.move;
+	console.log("current player: "+ username + " move: " + move);
 
 	var user;
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
-		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+		ttt_db.collection("users").findOne({username: username}, function(err, item) {
 			if (err) throw err;
-			user = item[0];
+			user = item;
 			if(user !== undefined){
 				console.log("user info:", user);
-				console.log("saved grid found: ", user.grid);
 			}else{
 				console.log("could not find saved game for: " + username);
 			}
+			db.close();
 		});	
 	});
 
+	if(user !== undefined){
+		console.log("outside user info:", user);
+	}else{
+		console.log("outside could not find saved game for: " + username);
+	}
+	
+
 	var grid = user.grid;
-	var move = req.body.move;
 	var winner = undefined;
 	var score = user.score;
-	if (move === null) {
+	if (move === undefined) {
+		console.log("user didn't make a move");
 		res.send({grid: grid, winner: " "});
 	} else {
+console.log("please");
 		grid[move] = 'O';
+console.log("checking winner...");
 		//check for a winner
 		winner = checkWinner(grid);
+console.log("hello?");
 		if (winner !== " ") {
+			console.log("WINNER: " + winner);
+
 			// game completed; reset grid, update user score
 			if (winner === "O") {
 				score[0]++;
@@ -190,25 +186,30 @@ router.post('/ttt/play', function(req, res) {
 				score[2]++; 
 			}
 
-			var id;
+			var list = user.listgames;
+			var newGame = {id: list.length + 1, start_date: new Date()};
+			list.push(newGame);
+
 			mongoClient.connect(url, function(err, db) {
 				if (err) throw err;		
 				var ttt_db = db.db("ttt");
-				ttt_db.collection("users").count(function(err, res) {
+				var myquery = { username:username } ;
+				var newvalues = { $set: { score: user.score, listgames:list } };	  
+				ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 					if (err) throw err;
-					id = res + 1;
+					console.log("updated score & listgames");
 					db.close();
 				});
 			});
 
-			var date = new Date();
-			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-			var game = {id:id, start_date:date, grid:grid, winner:winner};
-			var state = {id:id, start_date:date};
-			newGameEntry(game, state);
+
+		}else{
+			console.log("NO WINNER YET");
+			grid = serverMove(grid);
+			console.log("board after server's move: ", grid);
 		}
 		//send server's move then check for winner again
-		grid = serverMove(grid);
+		
 
 		// **** replace below ****
 
