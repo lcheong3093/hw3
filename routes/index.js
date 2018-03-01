@@ -43,7 +43,7 @@ router.post('/adduser', function(req, res){
 	var listgames = [];
 	var started = [];
 
-	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, score: score, active: false, login: false};
+	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, games:games, score: score, active: false, login: false};
 	
 	newUserEntry(user);
 
@@ -233,14 +233,17 @@ router.post('/ttt/play', function(req, res) {
 							}
 				
 							var list = user.listgames;
+							var games = user.games;
+							var newG = {id: games.length + 1, grid: grid, winner: winner};
 							var newGame = {id: list.length + 1, start_date: new Date()};
 							list.push(newGame);
+							games.push(newG);
 				
 							mongoClient.connect(url, function(err, db) {
 								if (err) throw err;		
 								var ttt_db = db.db("ttt");
 								var myquery = { username:username } ;
-								var newvalues = { $set: { score: user.score, listgames:list } };	  
+								var newvalues = { $set: { score: user.score, listgames:list, games: games} };	  
 								ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 									if (err) throw err;
 									console.log("updated score & listgames");
@@ -282,6 +285,7 @@ router.post('/getgame', function(req, res) {
 				// "id" refers to the game array id; game[id]
 	// to get { status:”OK”, grid:[“X”,”O”, ... ], winner:”X” }
 	var id = req.body.id;
+
 	res.send({status: 'OK'});
 });
 
