@@ -276,17 +276,25 @@ router.post('/listgames', function(req, res) {
 			res.send({status: 'OK', games: games});
 		});
 	});
-
-	
 });
 
 router.post('/getgame', function(req, res) {
 	// /getgame, { id: }
 				// "id" refers to the game array id; game[id]
 	// to get { status:”OK”, grid:[“X”,”O”, ... ], winner:”X” }
+	var cookie = req.cookies;
+    var username = cookie.username;
 	var id = req.body.id;
-
-	res.send({status: 'OK'});
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+			if (err) throw err;
+			var game = item[0].games[id];
+			var data = {status: 'OK', grid: game.grid, winner: game.winner};
+			res.send(data);
+		});
+	});
 });
 
 router.post('/getscore', function(req, res) {
