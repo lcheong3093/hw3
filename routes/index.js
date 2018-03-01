@@ -39,6 +39,7 @@ router.get('/adduser', function(req, res) {
 
 router.post('/adduser', function(req, res){	
 	var name = req.body.name;
+	console.log("name: " + name);
 	var username = req.body.username;
 	var email = req.body.email;
 	var password = req.body.password;
