@@ -224,11 +224,7 @@ router.post('/listgames', function(req, res) {
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
-		ttt_db.collection("users").find().toArray(function(err, users) {
-			if (err) throw err;
-			console.log("users list:", users);
-		});	
-		ttt_db.collection("games").find().toArray(function(err, item) {
+		ttt_db.collection("states").find().toArray(function(err, item) {
 			if (err) throw err;
 			console.log("test");
 			games = item;
