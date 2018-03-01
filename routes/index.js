@@ -112,13 +112,13 @@ router.post('/login', function(req, res){
 				var cookie = req.cookies;
 				
 				if (cookie === undefined) {		//Create new cookie if does not exist already
-					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				} else {							//Cookie exists
 					// console.log("cookie: " + cookie);
 					console.log("cookie exists");
-					res.clearCookie(data);
-					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.clearCookie(username);
+					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				}
 				res.send({status: 'OK'});
@@ -142,6 +142,12 @@ router.post('/logout', function(req, res) {
 });
 
 router.post('/ttt/play', function(req, res) {
+	var cookie = req.cookies;
+	if(cookie === undefined){
+		console.log("no cookie from browser");
+	}else{
+		console.log(cookie.username);
+	}
 	var grid = req.body.grid;
 	var move = req.body.move;
 
