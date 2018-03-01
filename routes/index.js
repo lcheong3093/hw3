@@ -11,6 +11,8 @@ var mongo_started = false;
 var url = "mongodb://localhost/ttt"
 var router = express.Router();
 
+
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -143,13 +145,16 @@ router.post('/logout', function(req, res) {
 
 router.post('/ttt/play', function(req, res) {
 	var cookie = req.cookies;
-	if(cookie === undefined){
-		console.log("no cookie from browser");
-	}else{
-		console.log("cookie.username: ", cookie.username);
-	}
+	var username = cookie.username;
 
+	// if(cookie === undefined){
+	// 	console.log("no cookie from browser");
+	// }else{
+	// 	console.log("cookie.username: ", cookie.username);
+	// }
 
+	var saved_game = getSavedGame(username);
+	console.log("saved game: ", saved_game);
 
 	var grid = req.body.grid;
 	var move = req.body.move;
@@ -179,19 +184,34 @@ function createMongoDB(){
 		var ttt_db = db.db("ttt");
 		ttt_db.createCollection("users", function(err, res) {
 			if (err) throw err;
-			console.log("Collection created");
+			console.log("users created");
+			db.close()
+		});	
+
+		ttt_db.createCollection("grids", function(err, res) {
+			if (err) throw err;
+			console.log("grids created");
 			db.close()
 		});	
 	});
 }
 
 function newUser(user){
+	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " ",];
+
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
 			console.log("user inserted: " + user);
+			db.close();
+		});
+
+		var game = {username: user.username, grid: grid};
+		ttt_db.collection("grids").insertOne(game, function(err, res) {
+			if (err) throw err;
+			console.log("empty grid inserted");
 			db.close();
 		});
 	});
@@ -211,11 +231,11 @@ function validateUser(email){
 	});
 }
 
-function constructHeader(username){
-	var d = new Date();
-	var message = username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ; 
-	return message;
-}
+// function constructHeader(username){
+// 	var d = new Date();
+// 	var message = username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ; 
+// 	return message;
+// }
 
 function findUser(username){
 	mongoClient.connect(url, function(err, db) {
@@ -228,6 +248,21 @@ function findUser(username){
 				return user;
 			else
 				console.log("COULD NOT FIND USER: " + username);
+		});	
+	});
+}
+
+function getSavedGame(username){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("grids").find({username: username}).toArray(function(err, item) {
+			if (err) throw err;
+			var game = item[0];
+			if(game !== undefined)
+				return game.grid;
+			else
+				console.log("could not find saved game for: " + username);
 		});	
 	});
 }
