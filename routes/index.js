@@ -39,33 +39,6 @@ router.post('/adduser', function(req, res){
 	var user = {username: username, password: password, email: email, active: false};
 
 	newUser(user);
-	// var key = rand.generateKey();
-	// console.log("generated key: " + key);
-
-	// var message = name + ", welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
-	
-	// //Create SMTP Server & send verification email
-	// const transport = nodemailer.createTransport({
-	// 	host: 'smtp.gmail.com',
-	// 	port: 465,
-	// 	secure: true,
-	// 	auth: {
-	// 	  user: 'tttcse356@gmail.com',
-	// 	  pass: 'kerfuffle3633*'
-	// 	}
-	// });
-
-	// var mailOpts = {
-    //     from: 'user@gmail.com',
-    //     to: email,
-    //     subject: 'Verify your account',
-    //     text: message
-	// };
-	
-	// transport.sendMail(mailOpts, (err, info) => {
-	// 	if (err) console.log(err); //Handle Error
-	// 	console.log(info);
-	// });
 
 	//Send user to verify page
 	var response = {status: 'OK'};
@@ -73,17 +46,6 @@ router.post('/adduser', function(req, res){
 });
 
 router.post('/verify', function(req, res){
-	// var key = req.body.key;
-	// var verification = req.body.verification;
-	// // console.log("key: " + key + "entered: " + verification);
-	// if(verification === key || verification === "abracadabra"){
-	// 	var d = new Date();
-  	// 	var message = req.body.username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-	// 	validateUser(req.body.username);
-	// 	res.render('play', {message: message}); //add user to database & allow to play game
-	// } else
-	// 	res.send("Incorrect key");
-
 	var key = rand.generateKey();
 	var user_key = req.body.key;
 	console.log("key: " + key + " entered: " + user_key + " email: " + req.body.email);
@@ -112,7 +74,6 @@ router.post('/verify', function(req, res){
 	if(user_key === key || user_key === "abracadabra"){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
-		// res.render('play', {message: message}); //add user to database & allow to play game
 	} else{
 		res.send({status: 'ERROR'});
 	}
@@ -134,21 +95,21 @@ router.post('/login', function(req, res){
 			if (err) throw err;
 			var user = item[0];
 			if (user === undefined) {
-console.log("user is undefined");
+// console.log("user is undefined");
 				res.send("user not found");
 				return;
 			}
 			else if (user.active === false) {
-console.log("user has not been activated/verified");
+// console.log("user has not been activated/verified");
 				res.send({status: 'ERROR'});
 			}
 			var pass = item[0].password;
 			if(pass !== password) {
-console.log("A: password in db doesn't match password entered");
+// console.log("A: password in db doesn't match password entered");
 				res.render('invalid_login');
 			}
 			else if(user.active === true){
-console.log("B: password in db matches password entered");
+// console.log("B: password in db matches password entered");
 				res.send({status: 'OK'});
 			}
 			db.close()
@@ -205,9 +166,6 @@ function validateUser(email){
 			db.close();
 		});
 	});
-
-	// ret = findUser(email);
-	// console.log(ret);
 }
 
 function constructHeader(username){
