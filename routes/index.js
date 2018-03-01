@@ -38,12 +38,14 @@ router.post('/adduser', function(req, res){
 	var email = req.body.email;
 	var password = req.body.password;
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-	var score = [0,0,0]; 	// wins, losses, ties
+	var human = 0;
+	var wopr = 0;
+	var tie = 0;
 
 	var listgames = [];
 	var started = [];
 	var games = [];
-	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, games:games, score: score, active: false, login: false};
+	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, games:games, human:human, wopr:wopr, tie:tie, active: false, login: false};
 	
 	newUserEntry(user);
 
@@ -87,16 +89,13 @@ router.post('/verify', function(req, res){
 		res.send({status: 'ERROR'});
 	}
 });
-
 router.get('/login', function(req, res){
 	res.render('login');
 });
-
 router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
 	var query = {username: username};
-
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
@@ -124,7 +123,6 @@ router.post('/login', function(req, res){
 						db.close();
 					});
 				});
-
 				var cookie = req.cookies.username;
 				if (cookie === undefined || cookie !== username) {					//Create new cookie if does not exist already
 					res.cookie("username", username);
@@ -140,9 +138,8 @@ router.post('/login', function(req, res){
 });
 
 router.post('/logout', function(req, res) {
-	/** CLEAR COOKIE **/
+	/** CLEAR COOKIE?? **/
 	var username = req.cookies.username;
-	
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
@@ -154,15 +151,12 @@ router.post('/logout', function(req, res) {
 			db.close();
 		});
 	});
-
 	res.send({status: 'OK'});
 });
-
 router.post('/ttt/play', function(req, res) {
 	var username = req.cookies.username;
 	var move = req.body.move;
 	console.log("current player: "+ username + " move: " + move);
-
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
@@ -175,29 +169,30 @@ router.post('/ttt/play', function(req, res) {
 			if(user !== undefined){
 				var grid = user.grid;
 				var winner = undefined;
-				var score = user.score;
+				var human = user.human;
+				var wopr = user.wopr;
+				var tie = user.tie;
 				if (move === null) {
 					console.log("user didn't make a move");
 					res.send({grid: grid, winner: " "});
 					console.log("current grid returned:" , grid);
-				} else {	//user made move
+				} else {
 					grid[move] = 'X';
-					//check for a winner
 					winner = checkWinner(grid);
 					if (winner !== " ") {
 						console.log("WINNER: " + winner);
 			
 						// game completed; reset grid, update user score
 						if (winner === "O") {
-							score[0]++;
+							wopr++;
 						}
 						else if (winner === "X") {
-							score[1]++;
+							human++;
 						}
 						else if (winner === ' ') {
-							score[2]++; 
+							tie++;
 						}
-			
+		
 						var list = user.listgames;
 						var newGame = {id: list.length + 1, start_date: new Date()};
 						list.push(newGame);
@@ -208,7 +203,7 @@ router.post('/ttt/play', function(req, res) {
 							var myquery = { username:username } ;
 							var empty = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 							console.log("list: ", list);
-							var newvalues = { $set: { score: user.score, listgames:list, grid: empty } };	  
+							var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, grid: empty } };	  
 							ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 								if (err) throw err;
 								console.log("updated score & listgames");
@@ -261,12 +256,9 @@ router.post('/ttt/play', function(req, res) {
 		});
 	});
 });
-
 router.post('/listgames', function(req, res) {
-	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
 	var username = req.cookies.username;
 	var games = undefined;
-
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
@@ -277,11 +269,7 @@ router.post('/listgames', function(req, res) {
 		});
 	});
 });
-
 router.post('/getgame', function(req, res) {
-	// /getgame, { id: }
-				// "id" refers to the game array id; game[id]
-	// to get { status:”OK”, grid:[“X”,”O”, ... ], winner:”X” }
 	var cookie = req.cookies;
     var username = cookie.username;
 	var id = req.body.id;
@@ -304,7 +292,6 @@ router.post('/getgame', function(req, res) {
 });
 
 router.post('/getscore', function(req, res) {
-    // to get { status:”OK”, human:0, wopr: 5, tie: 10 }
     var cookie = req.cookies;
     var username = cookie.username;
     var user;
@@ -464,8 +451,6 @@ function getSavedGame(username){
 		});	
 	});
 }
-
-//Gameplay
 function checkWinner(grid){	
 	if(grid[0] === "O" && grid[1] === "O" && grid[2] === "O")
 		return "O";
