@@ -76,15 +76,15 @@ router.post('/verify', function(req, res){
 	};
 	transport.sendMail(mailOpts, (err, info) => {
 		if (err) console.log(err); //Handle Error
-		console.log(info);
+		// console.log(info);
 	});
 	if(user_key === key || user_key === "abracadabra"){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
-	} else{
+	} else {
 		res.send({status: 'ERROR'});
 	}
-	});
+});
 
 router.get('/login', function(req, res){
 	res.render('login');
