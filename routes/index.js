@@ -93,7 +93,6 @@ router.post('/login', function(req, res){
 	var password = req.body.password;
 	
 console.log("1");
-	var data = {username: username, password: password, grid: grid};
 	var query = {username: username};
 	console.log("2");
 
