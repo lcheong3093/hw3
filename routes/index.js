@@ -65,7 +65,7 @@ router.post('/verify', function(req, res){
 		secure: true,
 		auth: {
 		  user: 'tttcse356@gmail.com',
-		  pass: 'kerfuffle3633*'
+		  pass: '2COMESafter1'
 		}
 	});
 	var mailOpts = {
