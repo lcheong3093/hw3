@@ -40,7 +40,7 @@ router.post('/adduser', function(req, res){
 	var score = [0,0,0]; 	// wins, losses, ties
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 	var start_date = new Date();
-
+	console.log("start date:", start_date);
 	var user = {username: username, password: password, email: email, grid: grid, start_date: start_date, active: false, score: score};
 
 	newUserEntry(user);
