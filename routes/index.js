@@ -123,9 +123,11 @@ router.post('/verify', function(req, res){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
 		// res.render('play', {message: message}); //add user to database & allow to play game
-	} else
+	} else{
+		console.log("sadljflsajd");
 		res.send({status: 'ERROR'});
-});
+	}
+	});
 
 router.get('/login', function(req, res){
 	res.render('login');
@@ -139,22 +141,33 @@ router.post('/login', function(req, res){
 	console.log(query.username);
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
+console.log("1");
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
+console.log("2");
 			var user = item[0];
 			if (user === undefined) {
+				console.log("3");
+
 				res.send("user not found");
 				return;
 			}
 			else if (user.active === false) {
+console.log("4");
+
 				res.send({status: 'ERROR'});
 			}
 			var pass = item[0].password;
-			console.log(pass);
-			if(pass !== password)
+console.log(pass);
+console.log("5");
+
+			if(pass !== password) {
+console.log("6");
 				res.render('invalid_login');
+			}
 			else{
+console.log("7");
 				res.send({status: 'OK'});
 			}
 			db.close()
