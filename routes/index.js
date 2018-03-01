@@ -43,7 +43,7 @@ router.post('/adduser', function(req, res){
 	var listgames = [];
 	var started = [];
 
-	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, score: score, active: false};
+	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, score: score, active: false, login: false};
 	
 	newUserEntry(user);
 
@@ -113,6 +113,18 @@ router.post('/login', function(req, res){
 				console.log("wrong password");
 				res.send({status: 'ERROR'});
 			} else {										//Everything is fine -> log in
+				mongoClient.connect(url, function(err, db) {
+					if (err) throw err;		
+					var ttt_db = db.db("ttt");
+					var myquery = { username:username } ;
+					var newvalues = { $set: { login: true } };	  
+					ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+						if (err) throw err;
+						console.log("user logged in");
+						db.close();
+					});
+				});
+
 				var cookie = req.cookies.username;
 				if (cookie === undefined || cookie !== username) {					//Create new cookie if does not exist already
 					res.cookie("username", username);
@@ -129,6 +141,20 @@ router.post('/login', function(req, res){
 
 router.post('/logout', function(req, res) {
 	/** CLEAR COOKIE **/
+	var username = req.cookies.username;
+	
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;		
+		var ttt_db = db.db("ttt");
+		var myquery = { username:username } ;
+		var newvalues = { $set: { login: false } };	  
+		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+			if (err) throw err;
+			console.log("updated score & listgames");
+			db.close();
+		});
+	});
+
 	res.send({status: 'OK'});
 });
 
