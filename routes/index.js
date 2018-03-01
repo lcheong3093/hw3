@@ -58,7 +58,7 @@ router.post('/verify', function(req, res){
 	console.log("key: " + key + " entered: " + user_key + " email: " + req.body.email);
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
-	Create SMTP Server & send verification email
+	// Create SMTP Server & send verification email
 	const transport = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
 		port: 465,
