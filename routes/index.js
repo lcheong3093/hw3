@@ -58,26 +58,26 @@ router.post('/verify', function(req, res){
 	console.log("key: " + key + " entered: " + user_key + " email: " + req.body.email);
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
-	//Create SMTP Server & send verification email
-	// const transport = nodemailer.createTransport({
-	// 	host: 'smtp.gmail.com',
-	// 	port: 465,
-	// 	secure: true,
-	// 	auth: {
-	// 	  user: 'ttt-cse356@gmail.com',
-	// 	  pass: 'kerfuffle3633*'
-	// 	}
-	// });
-	// var mailOpts = {
-    //     from: 'user@gmail.com',
-    //     to: req.body.email,
-    //     subject: 'Verify your account',
-    //     text: message
-	// };
-	// transport.sendMail(mailOpts, (err, info) => {
-	// 	if (err) console.log(err); //Handle Error
-	// 	// console.log(info);
-	// });
+	Create SMTP Server & send verification email
+	const transport = nodemailer.createTransport({
+		host: 'smtp.gmail.com',
+		port: 465,
+		secure: true,
+		auth: {
+		  user: 'ttt-cse356@gmail.com',
+		  pass: 'kerfuffle3633*'
+		}
+	});
+	var mailOpts = {
+        from: 'user@gmail.com',
+        to: req.body.email,
+        subject: 'Verify your account',
+        text: message
+	};
+	transport.sendMail(mailOpts, (err, info) => {
+		if (err) console.log(err); //Handle Error
+		// console.log(info);
+	});
 	if(user_key === key || user_key === "abracadabra"){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
@@ -282,17 +282,7 @@ router.post('/getgame', function(req, res) {
 });
 
 router.post('/getscore', function(req, res) {
-    // var cookie = req.cookies;
     var username = req.cookies.username;
-	// mongoClient.connect(url, function(err, db) {
-	// 	if (err) throw err;
-	// 	var ttt_db = db.db("ttt");
-	// 	ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
-    //         if (err) throw err;
-	// 		var user = item[0];
-
-	// 	});	
-	// });
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
