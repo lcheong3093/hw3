@@ -215,6 +215,7 @@ router.post('/ttt/play', function(req, res) {
 });
 
 router.post('/listgames', function(req, res) {
+	console.log("req:", req);
 	var sd = new Date();
 	var game = {id:1, start_date:sd, grid:["X", "O", "X", "X", "X", "O", "X", "O", "X"] , winner:"X"};
 	var state = {id:1, start_date:sd};
@@ -231,13 +232,12 @@ router.post('/listgames', function(req, res) {
 			console.log("games:", games);
 		});	
 	});
-	console.log("before send");
 	res.send({status: 'OK', games:games});
 });
 
 router.post('/getgame', function(req, res) {
 	// /getgame, { id: }
-				// "id" refers to the game array id (game[id])
+				// "id" refers to the game array id; game[id]
 	// to get { status:”OK”, grid:[“X”,”O”, ... ], winner:”X” }
 	res.send({status: 'OK'});
 });
