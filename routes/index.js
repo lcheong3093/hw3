@@ -202,6 +202,9 @@ router.post('/ttt/play', function(req, res) {
 });
 
 router.post('/listgames', function(req, res) {
+	var sd = new Date();
+	var game = {id:1, start_date:sd, grid:["X", "O", "X", "X", "X", "O", "X", "O", "X"] , winner:"X"};
+	newGameEntry(game);
 	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
 	var games;
 	mongoClient.connect(url, function(err, db) {
