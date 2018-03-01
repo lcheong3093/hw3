@@ -146,8 +146,9 @@ router.post('/ttt/play', function(req, res) {
 	if(cookie === undefined){
 		console.log("no cookie from browser");
 	}else{
-		console.log(cookie.name);
+		console.log("cookie: ", cookie);
 	}
+	
 	var grid = req.body.grid;
 	var move = req.body.move;
 
