@@ -99,27 +99,28 @@ router.post('/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			if (user === undefined)	{			//User not in database
+			if (user === undefined) {			//User not in database
 				console.log("user not in db");
 				res.send({status: 'ERROR'});
-			} else if (user.active === false)	{	//Account hasn't been verified
+			} else if (user.active === false) {	//Account hasn't been verified
 				console.log("account not verified");
 				res.send({status: 'ERROR'});
-			} else if (user.password !== password)	{		//Incorrect password
+			} else if (user.password !== password) {		//Incorrect password
 				console.log("wrong password");
 				res.send({status: 'ERROR'});
-			} else{								//Everything is fine -> log in
+			} else {								//Everything is fine -> log in
 				var cookie = req.cookies;
-				if(cookie === undefined){		//Create new cookie if does not exist already
+				if (cookie !== undefined) {
+					res.clearCookie(data);
+				} else if (cookie === undefined) {		//Create new cookie if does not exist already
 					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
-				}else{							//Cookie exists
+				} else {							//Cookie exists
 					// console.log("cookie: " + cookie);
-					console.log("a;lsdkf;laskd;lfksdf");
+					console.log("cookie exists");
 				}
 				res.send({status: 'OK'});
 			}
-
 			db.close()
 		});	
 	});
