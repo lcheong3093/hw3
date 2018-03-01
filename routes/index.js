@@ -11,8 +11,6 @@ var mongo_started = false;
 var url = "mongodb://localhost/ttt"
 var router = express.Router();
 
-
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -39,11 +37,12 @@ router.post('/adduser', function(req, res){
 	var username = req.body.username;
 	var email = req.body.email;
 	var password = req.body.password;
+	var score = [0,0,0]; 	// wins, losses, ties
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
-	var user = {username: username, password: password, email: email, grid: grid, active: false};
+	var user = {username: username, password: password, email: email, grid: grid, active: false, score: score};
 
-	newUser(user);
+	newUserEntry(user);
 
 	//Send user to verify page
 	var response = {status: 'OK'};
@@ -91,7 +90,6 @@ router.get('/login', function(req, res){
 router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
-	
 	var query = {username: username};
 
 	mongoClient.connect(url, function(err, db) {
@@ -112,7 +110,7 @@ router.post('/login', function(req, res){
 			} else {								//Everything is fine -> log in
 				var cookie = req.cookies;
 				if (cookie === undefined) {		//Create new cookie if does not exist already
-					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.cookie("username", username, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				} else {							//Cookie exists
 					// console.log("cookie: " + cookie);
@@ -129,60 +127,15 @@ router.post('/login', function(req, res){
 });
 
 router.post('/logout', function(req, res) {
-	// if(req.cookies. === undefined){
-	// 	console.log("no cookie");
-	// 	res.send({status: 'OK'});
-	// }else{
-	// 	console.log(req.header.cookie);
-	// 	res.send({status: 'ERROR'});
-	// }
-	
 	/** CLEAR COOKIE **/
-	/*
-
-
->>
->>
->>>>> were you going to clear the cookie here?? or did you do it elsewhere already? 
-		and is chunk of comments above still necessary
->>
->>
-
-
-	*/
-	res.send({status: 'OK'});
-});
-
-router.post('/listgames', function(req, res) {
-	//todo
-	res.send({status: 'OK'});
-});
-router.post('/getgame', function(req, res) {
-	//todo
-	res.send({status: 'OK'});
-});
-router.post('/getscore', function(req, res) {
-	//todo
 	res.send({status: 'OK'});
 });
 
 router.post('/ttt/play', function(req, res) {
 	var cookie = req.cookies;
 	var username = cookie.username;
-console.log("username from cookie:"+ username);
-	// if(cookie === undefined){
-	// 	console.log("no cookie from browser");
-	// }else{
-	// 	console.log("cookie.username: ", cookie.username);
-	// }
+	console.log("username from cookie:"+ username);
 
-	// var saved_game = getSavedGame(username);
-	// if(saved_game !== undefined){
-	// 	console.log("saved game: ", saved_game.username);
-	// 	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
-	// }else{
-	// 	console.log("saved_game nothing returned");
-	// }
 	var user;
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
@@ -202,6 +155,7 @@ console.log("username from cookie:"+ username);
 	var grid = user.grid;
 	var move = req.body.move;
 	var winner = undefined;
+	var score = user.score;
 	if (move === null) {
 		res.send({grid: grid, winner: " "});
 	} else {
@@ -210,42 +164,77 @@ console.log("username from cookie:"+ username);
 		winner = checkWinner(grid);
 		if (winner !== " ") {
 			// game completed; reset grid, update user score
+			if (winner === "O") {
+				score[0]++;
+			}
+			else if (winner === "X") {
+				score[1]++;
+			}
+			else if (winner === "tie") {
+				score[2]++; 
+			}
+			var game = {id:id, start_date:start_date, grid:grid, winner:winner};
+			newGameEntry(game);
 			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 		}
-		//send server's move
+		//send server's move then check for winner again
 		grid = serverMove(grid);
-		//check for a winner again
 		winner = checkWinner(grid);
 		if (winner !== " ") {
-			// if the server made winning move ..
-			//
-			//
+			// game completed; reset grid, update user score
+			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+			if (winner === "O") 
+				score[0]++;
+			else if (winner === "X")
+				score[1]++;
+			else if (winner === "tie") 
+				score[2]++;
 		}
 		updateGrid(username, grid);
+		updateScore(username, score);
 	}
 	res.send({grid:grid, winner:winner});
+});
+
+router.post('/listgames', function(req, res) {
+	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
+
+	// need to track game history, as well as each game's start_date
+	res.send({status: 'OK'});
+});
+
+router.post('/getgame', function(req, res) {
+	// /getgame, { id: }
+				// "id" refers to the game array id (game[id])
+	// to get { status:”OK”, grid:[“X”,”O”,…], winner:”X” }
+	res.send({status: 'OK'});
+});
+
+router.post('/getscore', function(req, res) {
+	// to get { status:”OK”, human:0, wopr: 5, tie: 10 }
+				// is this win, loss, tie? 
+	res.send({status: 'OK'});
 });
 
 function createMongoDB(){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-		console.log("Database created");
 		var ttt_db = db.db("ttt");
 		ttt_db.createCollection("users", function(err, res) {
 			if (err) throw err;
-			console.log("users created");
+			console.log("users db created");
 			db.close()
 		});	
 
-		ttt_db.createCollection("grids", function(err, res) {
+		ttt_db.createCollection("games", function(err, res) {
 			if (err) throw err;
-			console.log("grids created");
+			console.log("games db created");
 			db.close()
 		});	
 	});
 }
 
-function newUser(user){
+function newUserEntry(user){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
@@ -279,18 +268,25 @@ function updateGrid(username, grid){
 		var newvalues = { $set: { grid:grid } };	  
 		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 			if (err) throw err;
-			console.log("grid updated");
+			console.log("Grid updated");
 			db.close();
 		});
 	});
 }
 
-
-// function constructHeader(username){
-// 	var d = new Date();
-// 	var message = username + " " + (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() ; 
-// 	return message;
-// }
+function updateScore(username, score){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;		
+		var ttt_db = db.db("ttt");
+		var myquery = { username:username } ;
+		var newvalues = { $set: { score:score } };	  
+		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+			if (err) throw err;
+			console.log("Score updated");
+			db.close();
+		});
+	});
+}
 
 function findUser(username){
 	mongoClient.connect(url, function(err, db) {
@@ -313,11 +309,11 @@ function getSavedGame(username){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
-		ttt_db.collection("grids").find({username: username}).toArray(function(err, item) {
+		ttt_db.collection("games").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
 			var game = item[0];
 			if(game !== undefined){
-				console.log("saved grid found: ", game.grid);
+				console.log("saved game found: ", game.grid);
 				ret.username = game.username;
 				ret.grid = game.grid;
 				return ret;
@@ -363,7 +359,12 @@ function checkWinner(grid){
 		return "X";
 	if(grid[6] === "X" && grid[7] === "X" && grid[8] === "X")
 		return "X";
-	return " ";
+	for(i = 0; i < 9; i++){
+		if(board[i] === " "){
+			return " ";
+		}
+	}
+	return "tie";
 }
 
 function serverMove(grid){
