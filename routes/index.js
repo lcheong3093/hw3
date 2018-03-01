@@ -41,9 +41,11 @@ router.post('/adduser', function(req, res){
 
 	var listgames = [];
 
-	var user = {username: username, password: password, email: email, grid: grid, listgames: listagmes, score: score, active: false};
-
+	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, score: score, active: false};
+	
 	newUserEntry(user);
+
+	console.log("added: ", user);
 
 	//Send user to verify page
 	var response = {status: 'OK'};
@@ -109,23 +111,19 @@ router.post('/login', function(req, res){
 				console.log("wrong password");
 				res.send({status: 'ERROR'});
 			} else {										//Everything is fine -> log in
-				var cookie = req.cookies;
+				var cookie = req.cookies.username;
 				if (cookie === undefined) {					//Create new cookie if does not exist already
 					res.cookie("username", username);
 					console.log("cookie created");
-					var first_game = {id: listgames.length + 1, start_date: new Date()};
+					var first_game = {id: user.listgames.length + 1, start_date: new Date()};
 					user.listgames.push(first_game);
 					console.log("first game: ", user.listgames);
 				} else {									//Cookie exists
-					// console.log("cookie: " + cookie);
 					console.log("cookie exists");
-					res.clearCookie(username);
-					res.cookie("username", username, {expires: new Date() + 99999, maxAge: 99999});
-					console.log("cookie created");
 				}
 				res.send({status: 'OK'});
 			}
-			db.close();
+			db.close()
 		});	
 	});
 });
@@ -218,23 +216,21 @@ router.post('/ttt/play', function(req, res) {
 });
 
 router.post('/listgames', function(req, res) {
-	console.log("req:", req);
-	var sd = new Date();
-	var game = {id:1, start_date:sd, grid:["X", "O", "X", "X", "X", "O", "X", "O", "X"] , winner:"X"};
-	var state = {id:1, start_date:sd};
-	newGameEntry(game, state);
 	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
-	var games;
+	var username = req.cookies.username;
+	var games = undefined;
+
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
-		ttt_db.collection("states").find().toArray(function(err, item) {
+		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
 			console.log("test");
-			games = item;
+			games = item[0].listgames;
 			console.log("games:", games);
 		});	
 	});
+
 	res.send({status: 'OK', games:games});
 });
 
@@ -265,13 +261,7 @@ function createMongoDB(){
 			if (err) throw err;
 			console.log("games db created");
 			db.close()
-		});	
-
-		ttt_db.createCollection("states", function(err, res) {
-			if (err) throw err;
-			console.log("states db created");
-			db.close()
-		});	
+		});
 	});
 }
 
@@ -287,18 +277,13 @@ function newUserEntry(user){
 	});
 }
 
-function newGameEntry(game, state){
+function newGameEntry(game){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("games").insertOne(game, function(err, res) {
 			if (err) throw err;
 			console.log("game inserted: ", game);
-		});
-
-		ttt_db.collection("states").insertOne(state, function(err, res) {
-			if (err) throw err;
-			console.log("game inserted: ", state);
 		});
 	});
 }
