@@ -64,7 +64,7 @@ router.post('/verify', function(req, res){
 		port: 465,
 		secure: true,
 		auth: {
-		  user: 'ttt-cse356@gmail.com',
+		  user: 'tttcse356@gmail.com',
 		  pass: 'kerfuffle3633*'
 		}
 	});
