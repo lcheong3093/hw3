@@ -110,15 +110,16 @@ router.post('/login', function(req, res){
 				res.send({status: 'ERROR'});
 			} else {								//Everything is fine -> log in
 				var cookie = req.cookies;
-				if (cookie !== undefined) {
-					res.clearCookie(data);
-				} 
+				
 				if (cookie === undefined) {		//Create new cookie if does not exist already
 					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				} else {							//Cookie exists
 					// console.log("cookie: " + cookie);
 					console.log("cookie exists");
+					res.clearCookie(data);
+					res.cookie(data, 10, {expires: new Date() + 99999, maxAge: 99999});
+					console.log("cookie created");
 				}
 				res.send({status: 'OK'});
 			}
