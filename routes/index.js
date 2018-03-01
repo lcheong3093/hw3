@@ -147,7 +147,6 @@ router.post('/logout', function(req, res) {
 		var newvalues = { $set: { login: false } };	  
 		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 			if (err) throw err;
-			console.log("updated score & listgames");
 			db.close();
 		});
 	});
@@ -182,7 +181,6 @@ router.post('/ttt/play', function(req, res) {
 					if (winner !== " ") {
 						console.log("WINNER: " + winner);
 			
-						// game completed; reset grid, update user score
 						if (winner === "O") {
 							wopr++;
 						}
@@ -206,49 +204,45 @@ router.post('/ttt/play', function(req, res) {
 							var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, grid: empty } };	  
 							ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 								if (err) throw err;
-								console.log("updated score & listgames");
 								db.close();
 							});
 						});
 					}else{
-						console.log("NO WINNER YET");
 						grid = serverMove(grid);
 						winner = checkWinner(grid);
 						if (winner !== " ") {
 							console.log("WINNER: " + winner);
-							// game completed; reset grid, update user score
+				
 							if (winner === "O") {
-								score[0]++;
+								wopr++;
 							}
 							else if (winner === "X") {
-								score[1]++;
+								human++;
 							}
 							else if (winner === ' ') {
-								score[2]++; 
+								tie++;
 							}
-				
+			
 							var list = user.listgames;
-							var games = user.games;
-							var newG = {id: games.length + 1, grid: grid, winner: winner};
 							var newGame = {id: list.length + 1, start_date: new Date()};
 							list.push(newGame);
-							games.push(newG);
 				
 							mongoClient.connect(url, function(err, db) {
 								if (err) throw err;		
 								var ttt_db = db.db("ttt");
 								var myquery = { username:username } ;
-								var newvalues = { $set: { score: user.score, listgames:list, games: games} };	  
+								var empty = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+								console.log("list: ", list);
+								var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, grid: empty } };	  
 								ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 									if (err) throw err;
-									console.log("updated score & listgames");
 									db.close();
 								});
 							});
 						}
 					}
 					updateGrid(username, grid);
-					updateScore(username, score);
+					updateScores(username, human, wopr, tie);
 					res.send({grid:grid, winner:winner});
 				}
 			}
@@ -401,15 +395,15 @@ function updateGrid(username, grid){
 	});
 }
 
-function updateScore(username, score){
+function updateScores(username, human, wopr, tie){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		var myquery = { username:username } ;
-		var newvalues = { $set: { score:score } };	  
+		var newvalues = { $set: { human:human, wopr:wopr, tie:tie } };	  
 		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 			if (err) throw err;
-			console.log("Score updated");
+			console.log("Scores updated");
 			db.close();
 		});
 	});
