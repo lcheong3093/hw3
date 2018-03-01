@@ -154,26 +154,10 @@ router.post('/ttt/play', function(req, res) {
 	// }
 
 	var saved_game = getSavedGame(username);
-	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
 	console.log("saved game: ", saved_game.grid);
+	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
 
-	var grid = req.body.grid;
-	var move = req.body.move;
-
-	if(move === undefined){						//move = null -> don't make a move
-		var ret = {grid: grid, winner: " "};
-		res.send(ret);
-	}else{
-		var winner = checkWinner(grid);
-
-		if(winner === " "){
-			var new_grid = serverMove(grid);
-			winner = checkWinner(grid);
-		}  
-		var data = {grid:new_grid, winner:winner};
-		
-		res.send(data);
-	}
+	
 
   
 });
