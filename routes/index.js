@@ -92,9 +92,7 @@ router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
 	
-console.log("1");
 	var query = {username: username};
-	console.log("2");
 
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
@@ -102,8 +100,6 @@ console.log("1");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			console.log("3");
-
 			if (user === undefined) {			//User not in database
 				console.log("user not in db");
 				res.send({status: 'ERROR'});
@@ -115,8 +111,6 @@ console.log("1");
 				res.send({status: 'ERROR'});
 			} else {								//Everything is fine -> log in
 				var cookie = req.cookies;
-				console.log("4");
-
 				if (cookie === undefined) {		//Create new cookie if does not exist already
 					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
@@ -129,9 +123,7 @@ console.log("1");
 				}
 				res.send({status: 'OK'});
 			}
-			db.close()
-			console.log("5");
-
+			db.close();
 		});	
 	});
 });
