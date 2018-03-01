@@ -39,8 +39,9 @@ router.post('/adduser', function(req, res){
 	var password = req.body.password;
 	var score = [0,0,0]; 	// wins, losses, ties
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+	var start_date = new Date();
 
-	var user = {username: username, password: password, email: email, grid: grid, active: false, score: score};
+	var user = {username: username, password: password, email: email, grid: grid, start_date: start_date, active: false, score: score};
 
 	newUserEntry(user);
 
