@@ -39,8 +39,9 @@ router.post('/adduser', function(req, res){
 	var username = req.body.username;
 	var email = req.body.email;
 	var password = req.body.password;
+	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
-	var user = {username: username, password: password, email: email, active: false};
+	var user = {username: username, password: password, email: email, grid: grid, active: false};
 
 	newUser(user);
 
@@ -90,7 +91,7 @@ router.get('/login', function(req, res){
 router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
-	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " ",];
+	
 
 	var data = {username: username, password: password, grid: grid};
 	var query = {username: username};
@@ -153,15 +154,29 @@ router.post('/ttt/play', function(req, res) {
 	// 	console.log("cookie.username: ", cookie.username);
 	// }
 
-	var saved_game = getSavedGame(username);
-	if(saved_game !== undefined){
-		console.log("saved game: ", saved_game.username);
-		console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
-	}else{
-		console.log("saved_game nothing returned");
-	}
-
+	// var saved_game = getSavedGame(username);
+	// if(saved_game !== undefined){
+	// 	console.log("saved game: ", saved_game.username);
+	// 	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
+	// }else{
+	// 	console.log("saved_game nothing returned");
+	// }
+	var user;
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+			if (err) throw err;
+			user = item[0];
+			if(user !== undefined){
+				console.log("saved grid found: ", user.grid);
+			}else{
+				console.log("could not find saved game for: " + username);
+			}
+		});	
+	});
 	
+	res.send(user.grid);
 
   
 });
@@ -186,21 +201,12 @@ function createMongoDB(){
 }
 
 function newUser(user){
-	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
 			console.log("user inserted: ", user);
-			db.close();
-		});
-
-		var game = {username: user.username, grid: grid};
-		ttt_db.collection("grids").insertOne(game, function(err, res) {
-			if (err) throw err;
-			console.log("empty grid inserted: ", grid);
 			db.close();
 		});
 	});
