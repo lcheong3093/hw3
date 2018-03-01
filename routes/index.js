@@ -504,7 +504,7 @@ function checkWinner(grid){
 			return " ";
 		}
 	}
-	return "tie";
+	return ' ';
 }
 
 function serverMove(grid){
