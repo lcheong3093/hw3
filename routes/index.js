@@ -154,12 +154,15 @@ router.post('/logout', function(req, res) {
 });
 
 router.post('/listgames', function(req, res) {
+	//todo
 	res.send({status: 'OK'});
 });
 router.post('/getgame', function(req, res) {
+	//todo
 	res.send({status: 'OK'});
 });
 router.post('/getscore', function(req, res) {
+	//todo
 	res.send({status: 'OK'});
 });
 
