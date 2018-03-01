@@ -205,8 +205,9 @@ router.post('/ttt/play', function(req, res) {
 							if (err) throw err;		
 							var ttt_db = db.db("ttt");
 							var myquery = { username:username } ;
+							var empty = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 							console.log("list: ", list);
-							var newvalues = { $set: { score: user.score, listgames:list } };	  
+							var newvalues = { $set: { score: user.score, listgames:list, grid: empty } };	  
 							ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 								if (err) throw err;
 								console.log("updated score & listgames");
