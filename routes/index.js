@@ -136,26 +136,12 @@ router.post('/ttt/play', function(req, res) {
 	var move = req.body.move;
 	console.log("current player: "+ username + " move: " + move);
 
-	var user;
-	mongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		var ttt_db = db.db("ttt");
-		ttt_db.collection("users").findOne({username: username}, function(err, item) {
-			if (err) throw err;
-			user = item;
-			if(user !== undefined){
-				console.log("user info:", user);
-			}else{
-				console.log("could not find saved game for: " + username);
-			}
-			db.close();
-		});	
-	});
+	var user = getUser(username);
 
 	if(user !== undefined){
-		console.log("outside user info:", user);
+		console.log("user from db: ", user);
 	}else{
-		console.log("outside could not find saved game for: " + username);
+		console.log("ahhhhhh");
 	}
 	
 
@@ -332,6 +318,21 @@ function validateUser(email){
 			db.close();
 		});
 	});
+}
+
+function getUser(username){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").findOne({username: username}, function(err, item) {
+			if (err) throw err;
+			var user = item[0];
+			if(user !== undefined)
+				return user;
+			else
+				console.log("COULD NOT FIND USER: " + username);
+		});	
+	})
 }
 
 function updateGrid(username, grid){
