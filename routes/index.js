@@ -11,6 +11,12 @@ var mongo_started = false;
 var url = "mongodb://localhost/ttt"
 var router = express.Router();
 
+// router.use(cookieSession({
+// 	name: 'user_id',
+// 	keys: ['key1', 'key2']
+// }));
+  
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -58,8 +64,8 @@ router.post('/verify', function(req, res){
 		port: 465,
 		secure: true,
 		auth: {
-		  user: 'laurenhuicheong@gmail.com',
-		  pass: 'oneplusone=2'
+		  user: 'ttt-cse356@gmail.com',
+		  pass: 'kerfuffle3633*'
 		}
 	});
 	var mailOpts = {
@@ -86,10 +92,10 @@ router.get('/login', function(req, res){
 
 router.post('/login', function(req, res){
 
-	if(req.header.cookie === null){
+	if(req.cookies.user_id === null){
 		console.log("no cookie from browser");
 	}else{
-		console.log(req.header.cookie);
+		console.log(req.cookies.user_id);
 	}
 
 	var username = req.body.username;
@@ -109,9 +115,11 @@ router.post('/login', function(req, res){
 				res.send({status: 'ERROR'});
 			else if(pass !== password)			//Incorrect password
 				res.send({status: 'ERROR'});
-			else								//Everything is fine -> log in
+			else{								//Everything is fine -> log in
+				res.cookie('user', req.body.username);
 				res.send({status: 'OK'});
-			
+			}
+
 			db.close()
 		});	
 	});
