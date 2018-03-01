@@ -93,6 +93,9 @@ router.get('/login', function(req, res){
 router.post('/login', function(req, res){
 	var username = req.body.username;
 	var password = req.body.password;
+	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " ",];
+
+	var data = {username: username, password: password, grid: grid};
 
 	var query = {username: username};
 	mongoClient.connect(url, function(err, db) {
@@ -132,7 +135,8 @@ router.post('/logout', function(req, res) {
 	// 	console.log(req.header.cookie);
 	// 	res.send({status: 'ERROR'});
 	// }
-
+	
+	/** CLEAR COOKIE **/
 	res.send({status: 'OK'});
 });
 
