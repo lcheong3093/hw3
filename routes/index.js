@@ -91,13 +91,6 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login', function(req, res){
-
-	if(req.cookies.user_id === null){
-		console.log("no cookie from browser");
-	}else{
-		console.log(req.cookies.user_id);
-	}
-
 	var username = req.body.username;
 	var password = req.body.password;
 
@@ -116,7 +109,13 @@ router.post('/login', function(req, res){
 			else if(pass !== password)			//Incorrect password
 				res.send({status: 'ERROR'});
 			else{								//Everything is fine -> log in
-				res.cookie('user', req.body.username);
+				var cookie = req.cookies.username;
+				if(cookie === undefined){		//Create new cookie if does not exist already
+					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
+					console.log("cookie created");
+				}else{							//Cookie exists
+					console.log("cookie: " + cookie);
+				}
 				res.send({status: 'OK'});
 			}
 
@@ -126,13 +125,15 @@ router.post('/login', function(req, res){
 });
 
 router.post('/logout', function(req, res) {
-	if(req.header.cookie === undefined){
-		console.log("no cookie");
-		res.send({status: 'OK'});
-	}else{
-		console.log(req.header.cookie);
-		res.send({status: 'ERROR'});
-	}
+	// if(req.cookies. === undefined){
+	// 	console.log("no cookie");
+	// 	res.send({status: 'OK'});
+	// }else{
+	// 	console.log(req.header.cookie);
+	// 	res.send({status: 'ERROR'});
+	// }
+
+	res.send({status: 'OK'});
 });
 
 router.post('/ttt/play', function(req, res) {
