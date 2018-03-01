@@ -42,7 +42,7 @@ router.post('/adduser', function(req, res){
 
 	var listgames = [];
 	var started = [];
-
+	var games = [];
 	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, games:games, score: score, active: false, login: false};
 	
 	newUserEntry(user);
