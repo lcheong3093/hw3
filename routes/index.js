@@ -243,7 +243,7 @@ function findUser(username){
 
 function getSavedGame(username){
 	console.log("findGame: " + username);
-
+	var ret = new Object();
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
@@ -252,7 +252,9 @@ function getSavedGame(username){
 			var game = item[0];
 			if(game !== undefined){
 				console.log("saved grid found: ", game.grid);
-				return game;
+				ret.username = game.username;
+				ret.grid = game.grid;
+				return ret;
 			}else{
 				console.log("could not find saved game for: " + username);
 				return undefined;
