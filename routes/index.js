@@ -240,10 +240,7 @@ router.post('/listgames', function(req, res) {
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
-			console.log("test");
 			games = item[0].listgames;
-			console.log("user: " + item[0].username);
-			console.log("games:", games);
 		});	
 	});
 
