@@ -104,12 +104,11 @@ router.post('/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			var pass = user.password;
 			if (user === undefined)				//User not in database
 				res.send({status: 'ERROR'});
 			else if (user.active === false)		//Account hasn't been verified
 				res.send({status: 'ERROR'});
-			else if(pass !== password)			//Incorrect password
+			else if(user.password !== password)			//Incorrect password
 				res.send({status: 'ERROR'});
 			else{								//Everything is fine -> log in
 				var cookie = req.cookies.username;
