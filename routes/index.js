@@ -11,6 +11,7 @@ var mongo_started = false;
 var url = "mongodb://localhost/ttt"
 var router = express.Router();
 
+var currentuser;
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -136,84 +137,85 @@ router.post('/ttt/play', function(req, res) {
 	var move = req.body.move;
 	console.log("current player: "+ username + " move: " + move);
 
-	var user = getUser(username);
-
-	if(user !== undefined){
-		console.log("user from db: ", user);
-	}else{
-		console.log("ahhhhhh");
-	}
-	
-
-	var grid = user.grid;
-	var winner = undefined;
-	var score = user.score;
-	if (move === undefined) {
-		console.log("user didn't make a move");
-		res.send({grid: grid, winner: " "});
-	} else {
-console.log("please");
-		grid[move] = 'O';
-console.log("checking winner...");
-		//check for a winner
-		winner = checkWinner(grid);
-console.log("hello?");
-		if (winner !== " ") {
-			console.log("WINNER: " + winner);
-
-			// game completed; reset grid, update user score
-			if (winner === "O") {
-				score[0]++;
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("users").findOne({username: username}, function(err, item) {
+			if (err) throw err;
+			var user = item;
+			console.log("*** user ***: ", user);
+			if(user !== undefined){
+				var grid = user.grid;
+				var winner = undefined;
+				var score = user.score;
+				if (move === undefined) {
+					console.log("user didn't make a move");
+					res.send({grid: grid, winner: " "});
+				} else {
+					grid[move] = 'O';
+					//check for a winner
+					winner = checkWinner(grid);
+					if (winner !== " ") {
+						console.log("WINNER: " + winner);
+			
+						// game completed; reset grid, update user score
+						if (winner === "O") {
+							score[0]++;
+						}
+						else if (winner === "X") {
+							score[1]++;
+						}
+						else if (winner === "tie") {
+							score[2]++; 
+						}
+			
+						var list = user.listgames;
+						var newGame = {id: list.length + 1, start_date: new Date()};
+						list.push(newGame);
+			
+						mongoClient.connect(url, function(err, db) {
+							if (err) throw err;		
+							var ttt_db = db.db("ttt");
+							var myquery = { username:username } ;
+							var newvalues = { $set: { score: user.score, listgames:list } };	  
+							ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+								if (err) throw err;
+								console.log("updated score & listgames");
+								db.close();
+							});
+						});
+			
+			
+					}else{
+						console.log("NO WINNER YET");
+						grid = serverMove(grid);
+						console.log("board after server's move: ", grid);
+					}
+					//send server's move then check for winner again
+					
+			
+					// **** replace below ****
+			
+					// winner = checkWinner(grid);
+					// if (winner !== " ") {
+					// 	// game completed; reset grid, update user score
+					// 	grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+					// 	if (winner === "O") 
+					// 		score[0]++;
+					// 	else if (winner === "X")
+					// 		score[1]++;
+					// 	else if (winner === "tie") 
+					// 		score[2]++;
+					// }
+					updateGrid(username, grid);
+					updateScore(username, score);
+					res.send({grid:grid, winner:winner});
+				}
 			}
-			else if (winner === "X") {
-				score[1]++;
-			}
-			else if (winner === "tie") {
-				score[2]++; 
-			}
-
-			var list = user.listgames;
-			var newGame = {id: list.length + 1, start_date: new Date()};
-			list.push(newGame);
-
-			mongoClient.connect(url, function(err, db) {
-				if (err) throw err;		
-				var ttt_db = db.db("ttt");
-				var myquery = { username:username } ;
-				var newvalues = { $set: { score: user.score, listgames:list } };	  
-				ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
-					if (err) throw err;
-					console.log("updated score & listgames");
-					db.close();
-				});
-			});
-
-
-		}else{
-			console.log("NO WINNER YET");
-			grid = serverMove(grid);
-			console.log("board after server's move: ", grid);
-		}
-		//send server's move then check for winner again
-		
-
-		// **** replace below ****
-
-		// winner = checkWinner(grid);
-		// if (winner !== " ") {
-		// 	// game completed; reset grid, update user score
-		// 	grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-		// 	if (winner === "O") 
-		// 		score[0]++;
-		// 	else if (winner === "X")
-		// 		score[1]++;
-		// 	else if (winner === "tie") 
-		// 		score[2]++;
-		// }
-		updateGrid(username, grid);
-		updateScore(username, score);
-	}
-	res.send({grid:grid, winner:winner});
+			else
+				console.log("COULD NOT FIND USER: " + username);
+		});
+	});
 });
 
 router.post('/listgames', function(req, res) {
@@ -320,18 +322,20 @@ function validateUser(email){
 	});
 }
 
-function getUser(username){
+function updateUserData(username){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
-		ttt_db.collection("users").findOne({username: username}, function(err, item) {
+		var temp = ttt_db.collection("users").findOne({username: username}, function(err, item) {
 			if (err) throw err;
 			var user = item;
-			if(user !== undefined)
-				return user;
+			if(user !== undefined){
+				console.log("currentuser: ", user);
+			}
 			else
 				console.log("COULD NOT FIND USER: " + username);
-		});	
+		});
+		return temp;	
 	})
 }
 
@@ -435,7 +439,7 @@ function checkWinner(grid){
 	if(grid[6] === "X" && grid[7] === "X" && grid[8] === "X")
 		return "X";
 	for(i = 0; i < 9; i++){
-		if(board[i] === " "){
+		if(grid[i] === " "){
 			return " ";
 		}
 	}
@@ -445,7 +449,7 @@ function checkWinner(grid){
 function serverMove(grid){
 	for(i = 0; i < 9; i++){
 		if(grid[i] === " "){
-			grid[i] = 'O';
+			grid[i] = 'X';
 			return grid;
 		}
 	}
