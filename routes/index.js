@@ -154,8 +154,12 @@ router.post('/ttt/play', function(req, res) {
 	// }
 
 	var saved_game = getSavedGame(username);
-	console.log("saved game: ", saved_game.username);
-	console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
+	if(saved_game !== undefined){
+		console.log("saved game: ", saved_game.username);
+		console.log("asdlkfjsakdjflskjdflkjslkdfjlskajdlfkd");
+	}else{
+		console.log("saved_game nothing returned");
+	}
 
 	
 
