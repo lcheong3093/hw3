@@ -87,7 +87,6 @@ router.post('/verify', function(req, res){
 	var key = rand.generateKey();
 	var user_key = req.body.key;
 	console.log("key: " + key + " entered: " + user_key + " email: " + req.body.email);
-
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
 	//Create SMTP Server & send verification email
@@ -100,31 +99,21 @@ router.post('/verify', function(req, res){
 		  pass: 'kerfuffle3633*'
 		}
 	});
-
-	console.log("created transporter");
-
 	var mailOpts = {
         from: 'user@gmail.com',
         to: req.body.email,
         subject: 'Verify your account',
         text: message
 	};
-	
-	console.log("set mailopts");
-
 	transport.sendMail(mailOpts, (err, info) => {
 		if (err) console.log(err); //Handle Error
 		console.log(info);
 	});
-
-	console.log("Mail sent");
-
 	if(user_key === key || user_key === "abracadabra"){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
 		// res.render('play', {message: message}); //add user to database & allow to play game
 	} else{
-		console.log("sadljflsajd");
 		res.send({status: 'ERROR'});
 	}
 	});
@@ -138,36 +127,28 @@ router.post('/login', function(req, res){
 	var password = req.body.password;
 
 	var query = {username: username};
-	console.log(query.username);
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
-console.log("1");
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
-console.log("2");
 			var user = item[0];
 			if (user === undefined) {
-				console.log("3");
-
+console.log("user is undefined");
 				res.send("user not found");
 				return;
 			}
 			else if (user.active === false) {
-console.log("4");
-
+console.log("user has not been activated/verified");
 				res.send({status: 'ERROR'});
 			}
 			var pass = item[0].password;
-console.log(pass);
-console.log("5");
-
 			if(pass !== password) {
-console.log("6");
+console.log("A: password in db doesn't match password entered");
 				res.render('invalid_login');
 			}
 			else{
-console.log("7");
+console.log("B: password in db matches password entered");
 				res.send({status: 'OK'});
 			}
 			db.close()
