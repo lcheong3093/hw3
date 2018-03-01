@@ -138,6 +138,28 @@ router.post('/logout', function(req, res) {
 	// }
 	
 	/** CLEAR COOKIE **/
+	/*
+
+
+>>
+>>
+>>>>> were you going to clear the cookie here?? or did you do it elsewhere already? 
+		and is chunk of comments above still necessary
+>>
+>>
+
+
+	*/
+	res.send({status: 'OK'});
+});
+
+router.post('/listgames', function(req, res) {
+	res.send({status: 'OK'});
+});
+router.post('/getgame', function(req, res) {
+	res.send({status: 'OK'});
+});
+router.post('/getscore', function(req, res) {
 	res.send({status: 'OK'});
 });
 
@@ -173,10 +195,32 @@ console.log("username from cookie:"+ username);
 			}
 		});	
 	});
-	
-	res.send(user.grid);
 
-  
+	var grid = user.grid;
+	var move = req.body.move;
+	var winner = undefined;
+	if (move === null) {
+		res.send({grid: grid, winner: " "});
+	} else {
+		grid[move] = 'O';
+		//check for a winner
+		winner = checkWinner(grid);
+		if (winner !== " ") {
+			// game completed; reset grid, update user score
+			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+		}
+		//send server's move
+		grid = serverMove(grid);
+		//check for a winner again
+		winner = checkWinner(grid);
+		if (winner !== " ") {
+			// if the server made winning move ..
+			//
+			//
+		}
+		updateGrid(username, grid);
+	}
+	res.send({grid:grid, winner:winner});
 });
 
 function createMongoDB(){
@@ -223,6 +267,21 @@ function validateUser(email){
 		});
 	});
 }
+
+function updateGrid(username, grid){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;		
+		var ttt_db = db.db("ttt");
+		var myquery = { username:username } ;
+		var newvalues = { $set: { grid:grid } };	  
+		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+			if (err) throw err;
+			console.log("grid updated");
+			db.close();
+		});
+	});
+}
+
 
 // function constructHeader(username){
 // 	var d = new Date();
