@@ -48,9 +48,6 @@ router.post('/adduser', function(req, res){
 	
 	newUserEntry(user);
 
-	console.log("added: ", user);
-
-	//Send user to verify page
 	var response = {status: 'OK'};
 	res.send(response);
 });
@@ -191,16 +188,18 @@ router.post('/ttt/play', function(req, res) {
 						}
 		
 						var list = user.listgames;
+						var games = user.games;
+						var newG = {id: games.length + 1, grid: grid, winner: winner};
 						var newGame = {id: list.length + 1, start_date: new Date()};
 						list.push(newGame);
-			
+						games.push(newG);
+		
 						mongoClient.connect(url, function(err, db) {
 							if (err) throw err;		
 							var ttt_db = db.db("ttt");
 							var myquery = { username:username } ;
 							var empty = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-							console.log("list: ", list);
-							var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, grid: empty } };	  
+							var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, games:games, grid: empty } };	  
 							ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 								if (err) throw err;
 								db.close();
@@ -223,16 +222,18 @@ router.post('/ttt/play', function(req, res) {
 							}
 			
 							var list = user.listgames;
+							var games = user.games;
+							var newG = {id: games.length + 1, grid: grid, winner: winner};
 							var newGame = {id: list.length + 1, start_date: new Date()};
 							list.push(newGame);
-				
+							games.push(newG);
+			
 							mongoClient.connect(url, function(err, db) {
 								if (err) throw err;		
 								var ttt_db = db.db("ttt");
 								var myquery = { username:username } ;
 								var empty = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-								console.log("list: ", list);
-								var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, grid: empty } };	  
+								var newvalues = { $set: { human:human, wopr:wopr, tie:tie, listgames:list, games:games, grid: empty } };	  
 								ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 									if (err) throw err;
 									db.close();
