@@ -126,6 +126,13 @@ router.post('/login', function(req, res){
 	});
 });
 
+router.post('/logout', function(req, res) {
+	if(req.header.cookie === null)
+		console.log("no cookie");
+	else
+		console.log(req.header.cookie);
+});
+
 router.post('/ttt/play', function(req, res) {
   var grid = req.body.grid;
   var winner = checkWinner(grid);
