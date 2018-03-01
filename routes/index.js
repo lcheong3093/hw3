@@ -175,9 +175,22 @@ router.post('/ttt/play', function(req, res) {
 				score[2]++; 
 			}
 
-			var game = {id:id, start_date:start_date, grid:grid, winner:winner};
-			newGameEntry(game);
+			var id;
+			mongoClient.connect(url, function(err, db) {
+				if (err) throw err;		
+				var ttt_db = db.db("ttt");
+				ttt_db.collection("users").count(function(err, res) {
+					if (err) throw err;
+					id = res + 1;
+					db.close();
+				});
+			});
+
+			var date = new Date();
 			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+			var game = {id:id, start_date:date, grid:grid, winner:winner};
+			var state = {id:id, start_date:date};
+			newGameEntry(game, state);
 		}
 		//send server's move then check for winner again
 		grid = serverMove(grid);
@@ -204,7 +217,8 @@ router.post('/ttt/play', function(req, res) {
 router.post('/listgames', function(req, res) {
 	var sd = new Date();
 	var game = {id:1, start_date:sd, grid:["X", "O", "X", "X", "X", "O", "X", "O", "X"] , winner:"X"};
-	newGameEntry(game);
+	var state = {id:1, start_date:sd};
+	newGameEntry(game, state);
 	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
 	var games;
 	mongoClient.connect(url, function(err, db) {
@@ -253,6 +267,12 @@ function createMongoDB(){
 			console.log("games db created");
 			db.close()
 		});	
+
+		ttt_db.createCollection("states", function(err, res) {
+			if (err) throw err;
+			console.log("states db created");
+			db.close()
+		});	
 	});
 }
 
@@ -268,14 +288,18 @@ function newUserEntry(user){
 	});
 }
 
-function newGameEntry(game){
+function newGameEntry(game, state){
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;		
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("games").insertOne(game, function(err, res) {
 			if (err) throw err;
 			console.log("game inserted: ", game);
-			db.close();
+		});
+
+		ttt_db.collection("states").insertOne(state, function(err, res) {
+			if (err) throw err;
+			console.log("game inserted: ", state);
 		});
 	});
 }
