@@ -41,11 +41,10 @@ router.post('/adduser', function(req, res){
 	var human = 0;
 	var wopr = 0;
 	var tie = 0;
-
 	var listgames = [];
-	var started = [];
 	var games = [];
-	var user = {username: username, password: password, email: email, grid: grid, listgames: listgames, games:games, human:human, wopr:wopr, tie:tie, active: false, login: false};
+
+	var user = {username: username, password: password, email: email, grid: grid, human:human, wopr:wopr, tie:tie, listgames: listgames, games:games, active: false, login: false};
 	
 	newUserEntry(user);
 
@@ -274,8 +273,9 @@ router.post('/getgame', function(req, res) {
 		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
+			console.log("**user: ", user);
 			var allgames = user.games;
-			console.log("**allgames: ", allgames);
+			console.log("**allgames: ", game);
 			var game = allgames[id-1];
 			console.log("**game: ", game);
 			var data = {status: 'OK', grid: game.grid, winner: game.winner};
