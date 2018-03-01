@@ -179,6 +179,7 @@ router.post('/ttt/play', function(req, res) {
 				if (move === undefined) {
 					console.log("user didn't make a move");
 					res.send({grid: grid, winner: " "});
+					console.log("current grid returned:" , grid);
 				} else {	//user made move
 					grid[move] = 'X';
 					//check for a winner
