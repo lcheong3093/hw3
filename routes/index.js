@@ -282,20 +282,18 @@ router.post('/getgame', function(req, res) {
 });
 
 router.post('/getscore', function(req, res) {
-    var cookie = req.cookies;
-    var username = cookie.username;
-	mongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		var ttt_db = db.db("ttt");
-		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
-            if (err) throw err;
-			var user = item[0];
-			var human = user.human;   
-			var wopr = user.wopr;
-			var tie = user.tie;
-			res.send({status: 'OK', human:human, wopr:wopr, tie:tie});		
-		});	
-	});
+    // var cookie = req.cookies;
+    // var username = cookie.username;
+	// mongoClient.connect(url, function(err, db) {
+	// 	if (err) throw err;
+	// 	var ttt_db = db.db("ttt");
+	// 	ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
+    //         if (err) throw err;
+	// 		var user = item[0];
+
+	// 	});	
+	// });
+	res.send({status: "OK", human: 0, wopr: 0, tie: 0});
 });
 
 function createMongoDB(){
