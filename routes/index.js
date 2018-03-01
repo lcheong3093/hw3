@@ -127,10 +127,13 @@ router.post('/login', function(req, res){
 });
 
 router.post('/logout', function(req, res) {
-	if(req.header.cookie === null)
+	if(req.header.cookie === undefined){
 		console.log("no cookie");
-	else
+		res.send({status: 'OK'});
+	}else{
 		console.log(req.header.cookie);
+		res.send({status: 'ERROR'});
+	}
 });
 
 router.post('/ttt/play', function(req, res) {
