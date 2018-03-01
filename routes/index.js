@@ -37,11 +37,12 @@ router.post('/adduser', function(req, res){
 	var username = req.body.username;
 	var email = req.body.email;
 	var password = req.body.password;
-	var score = [0,0,0]; 	// wins, losses, ties
 	var grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-	var start_date = new Date();
-	console.log("start date:", start_date);
-	var user = {username: username, password: password, email: email, grid: grid, start_date: start_date, active: false, score: score};
+	var score = [0,0,0]; 	// wins, losses, ties
+
+	var listgames = [];
+
+	var user = {username: username, password: password, email: email, grid: grid, listgames: listagmes, score: score, active: false};
 
 	newUserEntry(user);
 
@@ -99,21 +100,24 @@ router.post('/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			if (user === undefined) {			//User not in database
+			if (user === undefined) {						//User not in database
 				console.log("user not in db");
 				res.send({status: 'ERROR'});
-			} else if (user.active === false) {	//Account hasn't been verified
+			} else if (user.active === false) {				//Account hasn't been verified
 				console.log("account not verified");
 				res.send({status: 'ERROR'});
 			} else if (user.password !== password) {		//Incorrect password
 				console.log("wrong password");
 				res.send({status: 'ERROR'});
-			} else {								//Everything is fine -> log in
+			} else {										//Everything is fine -> log in
 				var cookie = req.cookies;
-				if (cookie === undefined) {		//Create new cookie if does not exist already
-					res.cookie("username", username, {expires: new Date() + 99999, maxAge: 99999});
+				if (cookie === undefined) {					//Create new cookie if does not exist already
+					res.cookie("username", username);
 					console.log("cookie created");
-				} else {							//Cookie exists
+					var first_game = {id: listgames.length + 1, start_date: new Date()};
+					user.listgames.push(first_game);
+					console.log("first game: ", user.listgames);
+				} else {									//Cookie exists
 					// console.log("cookie: " + cookie);
 					console.log("cookie exists");
 					res.clearCookie(username);
