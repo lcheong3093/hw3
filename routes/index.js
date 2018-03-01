@@ -174,23 +174,27 @@ router.post('/ttt/play', function(req, res) {
 			else if (winner === "tie") {
 				score[2]++; 
 			}
+
 			var game = {id:id, start_date:start_date, grid:grid, winner:winner};
 			newGameEntry(game);
 			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 		}
 		//send server's move then check for winner again
 		grid = serverMove(grid);
-		winner = checkWinner(grid);
-		if (winner !== " ") {
-			// game completed; reset grid, update user score
-			grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
-			if (winner === "O") 
-				score[0]++;
-			else if (winner === "X")
-				score[1]++;
-			else if (winner === "tie") 
-				score[2]++;
-		}
+
+		// **** replace below ****
+
+		// winner = checkWinner(grid);
+		// if (winner !== " ") {
+		// 	// game completed; reset grid, update user score
+		// 	grid = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+		// 	if (winner === "O") 
+		// 		score[0]++;
+		// 	else if (winner === "X")
+		// 		score[1]++;
+		// 	else if (winner === "tie") 
+		// 		score[2]++;
+		// }
 		updateGrid(username, grid);
 		updateScore(username, score);
 	}
@@ -199,9 +203,16 @@ router.post('/ttt/play', function(req, res) {
 
 router.post('/listgames', function(req, res) {
 	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
-
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("games").find().toArray(function(err, item) {
+			if (err) throw err;
+			var games = item;
+		});	
+	});
 	// need to track game history, as well as each game's start_date
-	res.send({status: 'OK'});
+	res.send({status: 'OK', games:games});
 });
 
 router.post('/getgame', function(req, res) {
@@ -242,6 +253,18 @@ function newUserEntry(user){
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
 			console.log("user inserted: ", user);
+			db.close();
+		});
+	});
+}
+
+function newGameEntry(game){
+	mongoClient.connect(url, function(err, db) {
+		if (err) throw err;		
+		var ttt_db = db.db("ttt");
+		ttt_db.collection("games").insertOne(game, function(err, res) {
+			if (err) throw err;
+			console.log("game inserted: ", game);
 			db.close();
 		});
 	});
