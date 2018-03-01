@@ -275,7 +275,7 @@ router.post('/getgame', function(req, res) {
 			var user = item[0];
 			console.log("**user: ", user);
 			var allgames = user.games;
-			console.log("**allgames: ", game);
+			console.log("**allgames: ", allgames);
 			var game = allgames[id-1];
 			console.log("**game: ", game);
 			var data = {status: 'OK', grid: game.grid, winner: game.winner};
