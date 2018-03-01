@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var cookieSession = require('cookie-session');
 //Send user a verification email
 const nodemailer = require('nodemailer');
 //Generate verification key
@@ -84,6 +85,14 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login', function(req, res){
+
+	if(req.header.cookie === null){
+		console.log("no cookie from browser");
+	}else{
+		console.log(req.header.cookie);
+	}
+
+
 	var username = req.body.username;
 	var password = req.body.password;
 
