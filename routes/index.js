@@ -174,6 +174,7 @@ router.post('/ttt/play', function(req, res) {
 			if (err) throw err;
 			user = item[0];
 			if(user !== undefined){
+				console.log("user info:", user);
 				console.log("saved grid found: ", user.grid);
 			}else{
 				console.log("could not find saved game for: " + username);
