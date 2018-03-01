@@ -292,10 +292,9 @@ router.post('/getgame', function(req, res) {
 		ttt_db.collection("users").find({username: username}).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			console.log("**user: ", user);
 			var allgames = user.games;
 			console.log("**allgames: ", allgames);
-			var game = allgames[id];
+			var game = allgames[id-1];
 			console.log("**game: ", game);
 			var data = {status: 'OK', grid: game.grid, winner: game.winner};
 			console.log("**data: ", data);
