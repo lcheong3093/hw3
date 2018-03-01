@@ -196,7 +196,7 @@ function validateUser(email){
 		var ttt_db = db.db("ttt");
 		var myquery = { email:email } ;
 		var newvalues = { $set: { active:true } };	  
-		ttt_db.collection("users").update(myquery, newvalues, function(err, res) {
+		ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
 			if (err) throw err;
 			console.log("user-document updated");
 			db.close();
