@@ -115,10 +115,24 @@ router.post('/login', function(req, res){
 				if (cookie === undefined) {					//Create new cookie if does not exist already
 					res.cookie("username", username);
 					console.log("cookie created");
+
 					var first_game = {id: user.listgames.length + 1, start_date: new Date()};
 					user.listgames.push(first_game);
 					console.log("first game: ", user.listgames);
-				} else {									//Cookie exists
+
+					mongoClient.connect(url, function(err, db) {
+						if (err) throw err;		
+						var ttt_db = db.db("ttt");
+						var myquery = { username:username } ;
+						var newvalues = { $set: { listgames:user.listgames } };	  
+						ttt_db.collection("users").updateMany(myquery, newvalues, function(err, res) {
+							if (err) throw err;
+							console.log("new game added to db");
+							db.close();
+						});
+					});
+
+				} else if(cookie === username){									//Cookie exists
 					console.log("cookie exists");
 				}
 				res.send({status: 'OK'});
@@ -227,11 +241,12 @@ router.post('/listgames', function(req, res) {
 			if (err) throw err;
 			console.log("test");
 			games = item[0].listgames;
+			console.log("user: " + item[0].username);
 			console.log("games:", games);
 		});	
 	});
 
-	res.send({status: 'OK', games:games});
+	res.send({status: 'OK', games:[]});
 });
 
 router.post('/getgame', function(req, res) {
