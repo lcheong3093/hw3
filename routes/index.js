@@ -152,7 +152,7 @@ router.post('/ttt/play', function(req, res) {
 					console.log("user didn't make a move");
 					res.send({grid: grid, winner: " "});
 				} else {
-					grid[move] = 'O';
+					grid[move] = 'X';
 					//check for a winner
 					winner = checkWinner(grid);
 					if (winner !== " ") {
@@ -449,7 +449,7 @@ function checkWinner(grid){
 function serverMove(grid){
 	for(i = 0; i < 9; i++){
 		if(grid[i] === " "){
-			grid[i] = 'X';
+			grid[i] = 'O';
 			return grid;
 		}
 	}
