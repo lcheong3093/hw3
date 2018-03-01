@@ -118,7 +118,7 @@ router.post('/login', function(req, res){
 					// console.log("cookie: " + cookie);
 					console.log("cookie exists");
 					res.clearCookie(username);
-					res.cookie(username, 10, {expires: new Date() + 99999, maxAge: 99999});
+					res.cookie("username", username, {expires: new Date() + 99999, maxAge: 99999});
 					console.log("cookie created");
 				}
 				res.send({status: 'OK'});
@@ -148,7 +148,7 @@ router.post('/ttt/play', function(req, res) {
 	}else{
 		console.log("cookie: ", cookie);
 	}
-	
+
 	var grid = req.body.grid;
 	var move = req.body.move;
 
