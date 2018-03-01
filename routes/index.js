@@ -238,7 +238,7 @@ router.post('/listgames', function(req, res) {
 router.post('/getgame', function(req, res) {
 	// /getgame, { id: }
 				// "id" refers to the game array id (game[id])
-	// to get { status:”OK”, grid:[“X”,”O”,…], winner:”X” }
+	// to get { status:”OK”, grid:[“X”,”O”, ... ], winner:”X” }
 	res.send({status: 'OK'});
 });
 
