@@ -203,15 +203,18 @@ router.post('/ttt/play', function(req, res) {
 
 router.post('/listgames', function(req, res) {
 	// to get { status:”OK”, games:[ {id:, start_date:}, ...] } 
+	var games;
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("games").find().toArray(function(err, item) {
 			if (err) throw err;
-			var games = item;
+			console.log("test");
+			games = item;
+			console.log("games:", games);
 		});	
 	});
-	// need to track game history, as well as each game's start_date
+	console.log("before send");
 	res.send({status: 'OK', games:games});
 });
 
