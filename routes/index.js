@@ -285,6 +285,7 @@ router.post('/getgame', function(req, res) {
 	var cookie = req.cookies;
     var username = cookie.username;
 	var id = req.body.id;
+	console.log("**id: ", id);
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
