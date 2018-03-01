@@ -103,22 +103,14 @@ router.post('/login', function(req, res){
 		ttt_db.collection("users").find(query).toArray(function(err, item) {
 			if (err) throw err;
 			var user = item[0];
-			if (user === undefined) {
-// console.log("user is undefined");
+			var pass = user.password;
+			if (user === undefined) {			//User not in database
 				res.send("user not found");
-				return;
-			}
-			else if (user.active === false) {
-// console.log("user has not been activated/verified");
+			}else if (user.active === false) {	//Account hasn't been verified
 				res.send({status: 'ERROR'});
-			}
-			var pass = item[0].password;
-			if(pass !== password) {
-// console.log("A: password in db doesn't match password entered");
-				res.render('invalid_login');
-			}
-			else if(user.active === true){
-// console.log("B: password in db matches password entered");
+			}else if(pass !== password) {		//Incorrect password
+				res.send({status: 'ERROR'});
+			}else{		//Everything is fine -> log in
 				res.send({status: 'OK'});
 			}
 			db.close()
