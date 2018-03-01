@@ -56,25 +56,25 @@ router.post('/verify', function(req, res){
 	var message = "Welcome to Tic Tac Toe. Enter this key to verify your account: " + key;
 	
 	//Create SMTP Server & send verification email
-	const transport = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
-		port: 465,
-		secure: true,
-		auth: {
-		  user: 'ttt-cse356@gmail.com',
-		  pass: 'kerfuffle3633*'
-		}
-	});
-	var mailOpts = {
-        from: 'user@gmail.com',
-        to: req.body.email,
-        subject: 'Verify your account',
-        text: message
-	};
-	transport.sendMail(mailOpts, (err, info) => {
-		if (err) console.log(err); //Handle Error
-		// console.log(info);
-	});
+	// const transport = nodemailer.createTransport({
+	// 	host: 'smtp.gmail.com',
+	// 	port: 465,
+	// 	secure: true,
+	// 	auth: {
+	// 	  user: 'ttt-cse356@gmail.com',
+	// 	  pass: 'kerfuffle3633*'
+	// 	}
+	// });
+	// var mailOpts = {
+    //     from: 'user@gmail.com',
+    //     to: req.body.email,
+    //     subject: 'Verify your account',
+    //     text: message
+	// };
+	// transport.sendMail(mailOpts, (err, info) => {
+	// 	if (err) console.log(err); //Handle Error
+	// 	// console.log(info);
+	// });
 	if(user_key === key || user_key === "abracadabra"){
 		validateUser(req.body.email);
 		res.send({status:'OK'});
@@ -204,14 +204,14 @@ function newUser(user){
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").insertOne(user, function(err, res) {
 			if (err) throw err;
-			console.log("user inserted: " + user);
+			console.log("user inserted: ", user);
 			db.close();
 		});
 
 		var game = {username: user.username, grid: grid};
 		ttt_db.collection("grids").insertOne(game, function(err, res) {
 			if (err) throw err;
-			console.log("empty grid inserted");
+			console.log("empty grid inserted: ", grid);
 			db.close();
 		});
 	});
