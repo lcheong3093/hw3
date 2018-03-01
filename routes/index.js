@@ -326,7 +326,7 @@ function getUser(username){
 		var ttt_db = db.db("ttt");
 		ttt_db.collection("users").findOne({username: username}, function(err, item) {
 			if (err) throw err;
-			var user = item[0];
+			var user = item;
 			if(user !== undefined)
 				return user;
 			else
