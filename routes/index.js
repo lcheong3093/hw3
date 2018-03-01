@@ -137,6 +137,9 @@ router.post('/ttt/play', function(req, res) {
 	var move = req.body.move;
 	console.log("current player: "+ username + " move: " + move);
 
+	if(username === undefined){
+		res.send({status: 'ERROR'});
+	}else{
 	mongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var ttt_db = db.db("ttt");
@@ -215,6 +218,7 @@ router.post('/ttt/play', function(req, res) {
 				console.log("COULD NOT FIND USER: " + username);
 		});
 	});
+	}
 });
 
 router.post('/listgames', function(req, res) {
