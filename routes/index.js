@@ -37,7 +37,7 @@ router.post('/listen', function(req, res) {
 					var ret = msg.content.toString();
 					console.log("received: " + ret);
 					// res.send({msg: ret});
-					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: msg});
+					// ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: msg});
 					console.log("message returned");
 
 					ch.ack(msg);
@@ -51,7 +51,7 @@ router.post('/listen', function(req, res) {
 				// console.log("send to queue");
 			});
 		});
-		setTimeout(function() { conn.close()}, 500);
+		// setTimeout(function() { conn.close()}, 500);
 	});
 
 });
