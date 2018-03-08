@@ -42,7 +42,7 @@ router.post('/listen', function(req, res) {
 				});
 			});
 		});
-		setTimeout(function() { conn.close()}, 500);
+		// setTimeout(function() { conn.close()}, 500);
 	});
 
 });
