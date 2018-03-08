@@ -33,12 +33,15 @@ router.post('/listen', function(req, res) {
 				}
 				console.log("binded to queues");
 
-				ch.consume(q.queue, function(mes) {
-					var ret = mes.content.toString();
+				ch.consume(q.queue, function(msg) {
+					var ret = msg.content.toString();
 					console.log("received: " + ret);
 					// res.send({msg: ret});
-					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
+					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: msg});
 					console.log("message returned");
+
+					ch.ack(msg);
+					console.log("acknowledged");
 					// setTimeout(function() { conn.close()}, 500);
 
 				});
