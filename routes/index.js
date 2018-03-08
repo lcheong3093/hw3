@@ -41,7 +41,7 @@ router.post('/listen', function(req, res) {
 					
 					
 					console.log("message returned: " + ret);
-					res.send({msg: ret});
+					res.json({msg: ret});
 					setTimeout(function() { conn.close()}, 500);
 					// ch.ack(msg);
 					// console.log("acknowledged");
@@ -51,8 +51,6 @@ router.post('/listen', function(req, res) {
 		});
 		// setTimeout(function() { conn.close()}, 500);
 	});
-	// console.log("msg: " + msg);
-	// res.send({msg: msg});
 });
 
 router.post('/speak', function(req, res) {
@@ -68,7 +66,7 @@ router.post('/speak', function(req, res) {
 		setTimeout(function() { conn.close()}, 500);
 	});
 
-	// res.send({status: 'OK'});
+	res.send({status: 'OK'});
 });
 
 
