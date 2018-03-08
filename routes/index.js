@@ -45,6 +45,7 @@ router.post('/speak', function(req, res) {
 		conn.createChannel(function(err, ch){
 			console.log("trying to publish msg");
 			ch.publish('hw3', req.body.key, new Buffer(req.body.msg));
+			console.log("published");
 		});
 
 		setTimeout(function() { conn.close()}, 500);
