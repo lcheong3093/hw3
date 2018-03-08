@@ -36,10 +36,10 @@ router.post('/listen', function(req, res) {
 				ch.consume(q.queue, function(msg) {
 					var ret = msg.content.toString();
 					console.log("received: " + ret);
-					// res.send({msg: ret});
-					// ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: msg});
-					console.log("message returned");
 
+					console.log("message returned");
+					res.send({msg: ret});
+					
 					ch.ack(msg);
 					console.log("acknowledged");
 					// setTimeout(function() { conn.close()}, 500);
