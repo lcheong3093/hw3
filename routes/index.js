@@ -53,7 +53,7 @@ router.post('/listen', function(req, res) {
 				// console.log("send to queue");
 			});
 		});
-		// setTimeout(function() { conn.close()}, 500);
+		setTimeout(function() { conn.close()}, 500);
 	});
 	// console.log("msg: " + msg);
 	// res.send({msg: msg});
