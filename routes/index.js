@@ -39,7 +39,7 @@ router.post('/listen', function(req, res) {
 					var ret = msg.content.toString();
 					console.log("received: " + ret);
 					
-					
+					setTimeout(function() { conn.close()}, 500);
 					console.log("message returned: " + ret);
 					res.send({msg: ret});
 					// setTimeout(function() { conn.close()}, 500);
