@@ -38,8 +38,10 @@ router.post('/listen', function(req, res) {
 });
 
 router.post('/speak', function(req, res) {
+	console.log(req.msg);
 	amqp.connect('amqp://localhost', function(err, conn) {
 		conn.createChannel(function(err, ch){
+			console.log("trying to publish msg");
 			ch.publish('hw3', req.key, new Buffer(req.msg));
 		});
 
