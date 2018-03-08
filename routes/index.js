@@ -40,7 +40,7 @@ router.post('/listen', function(req, res) {
 router.post('/speak', function(req, res) {
 	amqp.connect('amqp://localhost', function(err, conn) {
 		conn.createChannel(function(err, ch){
-			ch.publish('hw3', req.key, new Buffer(req.msg));
+			ch.publish('hw3', req.key, new Buffer(req.msg.content.toString()));
 		});
 
 		setTimeout(function() { conn.close()}, 500);
