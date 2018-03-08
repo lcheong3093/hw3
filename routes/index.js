@@ -32,8 +32,19 @@ router.get('/listen', function(req, res) {
 				});
 			});
 		});
+		setTimeout(function() { conn.close()}, 500);
 	});
 
+});
+
+router.post('/speak', function(req, res) {
+	amqp.connect('amqp://localhost', function(err, conn) {
+		conn.createChannel(function(err, ch){
+			ch.publish('hw3', req.key, new Buffer(req.msg));
+		});
+
+		setTimeout(function() { conn.close()}, 500);
+	});
 });
 
 
