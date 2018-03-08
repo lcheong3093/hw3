@@ -40,7 +40,7 @@ router.post('/listen', function(req, res) {
 					console.log("received: " + ret);
 					
 					setTimeout(function() { conn.close()}, 500);
-					console.log("message returned: " + msg);
+					console.log("message returned: " + ret);
 					res.send({msg: ret});
 
 					// ch.ack(msg);
