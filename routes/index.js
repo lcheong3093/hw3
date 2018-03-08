@@ -41,7 +41,7 @@ router.post('/listen', function(req, res) {
 
 					msg = ret;
 					console.log("message returned: " + msg);
-					// res.render({msg: ret});
+					res.send({msg: msg});
 
 					// ch.ack(msg);
 					// console.log("acknowledged");
@@ -56,8 +56,8 @@ router.post('/listen', function(req, res) {
 		});
 		// setTimeout(function() { conn.close()}, 500);
 	});
-	console.log("msg: " + msg);
-	res.send({msg: msg});
+	// console.log("msg: " + msg);
+	// res.send({msg: msg});
 });
 
 router.post('/speak', function(req, res) {
