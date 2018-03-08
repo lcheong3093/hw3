@@ -38,7 +38,7 @@ router.post('/listen', function(req, res) {
 });
 
 router.post('/speak', function(req, res) {
-	console.log(req.msg);
+	console.log(req.msg.toString());
 	amqp.connect('amqp://localhost', function(err, conn) {
 		conn.createChannel(function(err, ch){
 			console.log("trying to publish msg");
