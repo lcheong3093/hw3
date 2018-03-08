@@ -4,7 +4,7 @@ var amqp = require('amqplib/callback_api');
 
 var router = express.Router();
 
-var msg = undefined;
+global.msg = undefined;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
