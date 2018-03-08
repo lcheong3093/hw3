@@ -26,9 +26,9 @@ router.post('/listen', function(req, res) {
 				console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
 				ch.bindQueue(q.queue, 'hw3', req.keys);
 		  
-				ch.consume(q.queue, function(msg) {
-					var ret = msg.content.toString();
-					console.log(" [x] %s", msg.content.toString());
+				ch.consume(q.queue, function(mes) {
+					var ret = mes.content.toString();
+					console.log(" [x] %s", mes.content.toString());
 					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
 				});
 			});
