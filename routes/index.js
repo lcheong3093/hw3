@@ -30,6 +30,7 @@ router.post('/listen', function(req, res) {
 				console.log("binded to queue");
 
 				ch.consume(q.queue, function(mes) {
+					console.log("consuming....");
 					var ret = mes.content.toString();
 					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
 					console.log("send to queue");
