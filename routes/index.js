@@ -38,8 +38,8 @@ router.post('/listen', function(req, res) {
 					console.log("received: " + ret);
 
 					console.log("message returned");
-					res.send({msg: ret});
-					
+					res.render({msg: ret});
+
 					ch.ack(msg);
 					console.log("acknowledged");
 					// setTimeout(function() { conn.close()}, 500);
