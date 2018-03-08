@@ -4,6 +4,8 @@ var amqp = require('amqplib/callback_api');
 
 var router = express.Router();
 
+var msg = undefined;
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -37,8 +39,9 @@ router.post('/listen', function(req, res) {
 					var ret = msg.content.toString();
 					console.log("received: " + ret);
 
+					msg = ret;
 					console.log("message returned");
-					res.render({msg: ret});
+					// res.render({msg: ret});
 
 					ch.ack(msg);
 					console.log("acknowledged");
@@ -51,9 +54,9 @@ router.post('/listen', function(req, res) {
 				// console.log("send to queue");
 			});
 		});
-		// setTimeout(function() { conn.close()}, 500);
+		setTimeout(function() { conn.close()}, 500);
 	});
-
+	res.send({msg: msg});
 });
 
 router.post('/speak', function(req, res) {
