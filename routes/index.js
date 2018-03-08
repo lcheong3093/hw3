@@ -26,8 +26,12 @@ router.post('/listen', function(req, res) {
 		conn.createChannel(function(err, ch){
 			ch.assertQueue('', {exclusive: true}, function(err, q) {
 				console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-				ch.bindQueue(q.queue, 'hw3', req.body.keys);
-				console.log("binded to queue");
+
+				var keys = req.body.keys;
+				for(var i = 0; i < keys.length; i++){
+					ch.bindQueue(q.queue, 'hw3', keys[i]);
+				}
+				console.log("binded to queues");
 
 				ch.consume(q.queue, function(mes) {
 					console.log("consuming....");
