@@ -19,7 +19,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
 	setTimeout(function() { conn.close()}, 500);
 });
 
-router.get('/listen', function(req, res) {
+router.post('/listen', function(req, res) {
 	amqp.connect('amqp://localhost', function(err, conn) {
 		conn.createChannel(function(err, ch){
 			ch.assertQueue('', {exclusive: true}, function(err, q) {
