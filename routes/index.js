@@ -34,12 +34,14 @@ router.post('/listen', function(req, res) {
 				console.log("binded to queues");
 
 				ch.consume(q.queue, function(mes) {
-					console.log("consuming....");
 					var ret = mes.content.toString();
-					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
-					console.log("send to queue");
+					console.log("received: " + ret);
 					// res.send(req.body.msg);
 				});
+
+
+				// ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
+				// console.log("send to queue");
 			});
 		});
 		// setTimeout(function() { conn.close()}, 500);
