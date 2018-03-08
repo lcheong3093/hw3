@@ -27,8 +27,9 @@ router.post('/listen', function(req, res) {
 				ch.bindQueue(q.queue, 'hw3', req.keys);
 		  
 				ch.consume(q.queue, function(msg) {
-				  console.log(" [x] %s", msg.content.toString());
-				  res.send({msg:msg.content.toString()});
+					var ret = msg.content.toString();
+					console.log(" [x] %s", msg.content.toString());
+					res.send({msg:ret});
 				});
 			});
 		});
