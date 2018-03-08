@@ -68,7 +68,7 @@ router.post('/speak', function(req, res) {
 		setTimeout(function() { conn.close()}, 500);
 	});
 
-	res.send({status: 'OK'});
+	// res.send({status: 'OK'});
 });
 
 
