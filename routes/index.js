@@ -39,21 +39,17 @@ router.post('/listen', function(req, res) {
 					var ret = msg.content.toString();
 					console.log("received: " + ret);
 					
-					// setTimeout(function() { conn.close()}, 500);
+					
 					console.log("message returned: " + ret);
 					res.send({msg: ret});
-
+					setTimeout(function() { conn.close()}, 500);
 					// ch.ack(msg);
 					// console.log("acknowledged");
 
 				});
-
-
-				// ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
-				// console.log("send to queue");
 			});
 		});
-		setTimeout(function() { conn.close()}, 500);
+		// setTimeout(function() { conn.close()}, 500);
 	});
 	// console.log("msg: " + msg);
 	// res.send({msg: msg});
