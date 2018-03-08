@@ -40,7 +40,7 @@ router.post('/listen', function(req, res) {
 					console.log("received: " + ret);
 
 					msg = ret;
-					console.log("message returned");
+					console.log("message returned: " + msg);
 					// res.render({msg: ret});
 
 					// ch.ack(msg);
@@ -56,6 +56,7 @@ router.post('/listen', function(req, res) {
 		});
 		// setTimeout(function() { conn.close()}, 500);
 	});
+	console.log("msg: " + msg);
 	res.send({msg: msg});
 });
 
