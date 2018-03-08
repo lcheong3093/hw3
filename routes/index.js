@@ -41,7 +41,7 @@ router.post('/listen', function(req, res) {
 					
 					setTimeout(function() { conn.close()}, 500);
 					console.log("message returned: " + ret);
-					res.send({msg: ret});
+					res.send({msg: msg});
 					// setTimeout(function() { conn.close()}, 500);
 					// ch.ack(msg);
 					// console.log("acknowledged");
