@@ -36,7 +36,7 @@ router.post('/listen', function(req, res) {
 				ch.consume(q.queue, function(mes) {
 					var ret = mes.content.toString();
 					console.log("received: " + ret);
-					// res.send(req.body.msg);
+					res.send({msg: ret});
 				});
 
 
