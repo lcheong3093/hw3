@@ -28,7 +28,6 @@ router.post('/listen', function(req, res) {
 		  
 				ch.consume(q.queue, function(mes) {
 					var ret = mes.content.toString();
-					console.log(" [x] %s", mes.content.toString());
 					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
 				});
 			});
