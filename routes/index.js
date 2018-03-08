@@ -36,7 +36,10 @@ router.post('/listen', function(req, res) {
 				ch.consume(q.queue, function(mes) {
 					var ret = mes.content.toString();
 					console.log("received: " + ret);
-					res.send({msg: ret});
+					// res.send({msg: ret});
+					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
+					setTimeout(function() { conn.close()}, 500);
+
 				});
 
 
@@ -44,7 +47,7 @@ router.post('/listen', function(req, res) {
 				// console.log("send to queue");
 			});
 		});
-		setTimeout(function() { conn.close()}, 500);
+		// setTimeout(function() { conn.close()}, 500);
 	});
 
 });
