@@ -20,15 +20,19 @@ amqp.connect('amqp://localhost', function(err, conn) {
 });
 
 router.post('/listen', function(req, res) {
+	console.log("/listen");
+
 	amqp.connect('amqp://localhost', function(err, conn) {
 		conn.createChannel(function(err, ch){
 			ch.assertQueue('', {exclusive: true}, function(err, q) {
 				console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
 				ch.bindQueue(q.queue, 'hw3', req.keys);
-		  
+				console.log("binded to queue");
+
 				ch.consume(q.queue, function(mes) {
 					var ret = mes.content.toString();
 					ch.sendToQueue(q.queue, new Buffer(ret.toString()), {msg: ret});
+					console.log("send to queue");
 					// res.send(req.body.msg);
 				});
 			});
